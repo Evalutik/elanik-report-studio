@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="609.0" prefWidth="1054.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController">
+<AnchorPane prefHeight="609.0" prefWidth="1054.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ui.MainController">
     <!-- Menu Bar -->
     <MenuBar layoutY="1.0" prefHeight="25.0" prefWidth="1084.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
@@ -38,7 +38,8 @@
            <TableColumn fx:id="idColumn" text="Номер" />
            <TableColumn fx:id="dateTimeColumn" text="Время" />
            <TableColumn fx:id="pointsNumColumn" text="Точек" />
-           <TableColumn fx:id="baseIdColumn" text="Основа" />
+           <TableColumn fx:id="baseElementNameColumn" text="Основа" />
+           <TableColumn fx:id="alloyTypeColumn" text="Тип" />
            <TableColumn fx:id="commentColumn" text="Комментарий" />
        </columns>
    </TableView>
@@ -47,9 +48,9 @@
        <TableColumn fx:id="elementNameColumn" text="Элемент" />
        <TableColumn fx:id="concentrationColumn" text="\%" />
          <TableColumn fx:id="deviationColumn" text="±" />
-         <TableColumn fx:id="mark1Column" text="M1" />
-         <TableColumn fx:id="mark2Column" text="M2" />
-         <TableColumn fx:id="mark3Column" text="M3" />
+         <TableColumn fx:id="alloy1Column" text="M1" />
+         <TableColumn fx:id="alloy2Column" text="M2" />
+         <TableColumn fx:id="alloy3Column" text="M3" />
      </columns>
    </TableView>
 

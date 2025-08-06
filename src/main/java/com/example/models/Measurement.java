@@ -1,5 +1,7 @@
-package com.example;
+package com.example.models;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.property.*;
 
 public class Measurement {
@@ -7,34 +9,42 @@ public class Measurement {
     private final IntegerProperty id;
     private final StringProperty dateTime;
     private final IntegerProperty pointsNum;
-    private final IntegerProperty baseId;
-    private final StringProperty comment;
+    private final StringProperty baseElementName;
     private final StringProperty alloyType;
+    private final StringProperty comment;
 
+    private final List<String> alloyNames = new ArrayList<>();
 
-    public Measurement(int id, String dateTime, int pointsNum, int baseId, String comment, String alloyType) {
+    private final List<ElementData> elementsData = new ArrayList<>();
+
+    public Measurement(int id, String dateTime, int pointsNum, String baseElementName, String comment, String alloyType) {
         this.id = new SimpleIntegerProperty(id);
         this.dateTime = new SimpleStringProperty(dateTime);
         this.pointsNum = new SimpleIntegerProperty(pointsNum);
-        this.baseId = new SimpleIntegerProperty(baseId);
-        this.comment = new SimpleStringProperty(comment);
+        this.baseElementName = new SimpleStringProperty(baseElementName);
         this.alloyType = new SimpleStringProperty(alloyType);
+        this.comment = new SimpleStringProperty(comment);
     }
 
     public BooleanProperty selectedProperty() { return selected; }
     public IntegerProperty idProperty() { return id; }
     public StringProperty dateTimeProperty() { return dateTime; }
     public IntegerProperty pointsNumProperty() { return pointsNum; }
-    public IntegerProperty baseIdProperty() { return baseId; }
-    public StringProperty commentProperty() { return comment; }
+    public StringProperty baseElementNameProperty() { return baseElementName; }
     public StringProperty alloyTypeProperty() { return alloyType; }
+    public StringProperty commentProperty() { return comment; }
 
     // Getters for TableView binding via PropertyValueFactory
     public boolean isSelected() { return selected.get(); }
     public int getId() { return id.get(); }
     public String getDateTime() { return dateTime.get(); }
     public int getPointsNum() { return pointsNum.get(); }
-    public int getBaseId() { return baseId.get(); }
-    public String getComment() { return comment.get(); }
+    public String getBaseElementName() { return baseElementName.get(); }
     public String getAlloyType() { return alloyType.get(); }
+    public String getComment() { return comment.get(); }
+    public List<ElementData> getElementsData() { return elementsData; }
+
+    public List<String> getAlloyNames() {
+        return alloyNames;
+    }
 }

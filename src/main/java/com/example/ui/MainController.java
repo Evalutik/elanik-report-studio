@@ -1,23 +1,32 @@
-package com.example;
+package com.example.ui;
 
+import com.example.models.ElementData;
+import com.example.models.ElementPercentageFitStore;
+import com.example.models.Measurement;
+import com.example.models.TypeAlloyMatch;
+import com.example.utils.Calculator;
+import com.example.utils.DatabaseConnection;
+import com.example.utils.PeriodicTable;
 import java.io.File;
-import java.net.URL;
-import java.security.MessageDigest;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+
+import static com.example.services.DataService.loadElementsForMeasurement;
+import static com.example.services.DataService.loadMeasurementsFromDatabase;
 
 
 public class MainController {
@@ -30,7 +39,8 @@ public class MainController {
     @FXML private TableColumn<Measurement, Integer> idColumn;
     @FXML private TableColumn<Measurement, String> dateTimeColumn;
     @FXML private TableColumn<Measurement, Integer> pointsNumColumn;
-    @FXML private TableColumn<Measurement, Integer> baseIdColumn;
+    @FXML private TableColumn<Measurement, String> baseElementNameColumn;
+    @FXML private TableColumn<Measurement, String> alloyTypeColumn;
     @FXML private TableColumn<Measurement, String> commentColumn;
 
     private final ObservableList<Measurement> measurements = FXCollections.observableArrayList();
@@ -39,22 +49,23 @@ public class MainController {
     @FXML private TableColumn<ElementData, String> elementNameColumn;
     @FXML private TableColumn<ElementData, Float> concentrationColumn;
     @FXML private TableColumn<ElementData, Float> deviationColumn;
-    @FXML private TableColumn<ElementData, String> mark1Column;
-    @FXML private TableColumn<ElementData, String> mark2Column;
-    @FXML private TableColumn<ElementData, String> mark3Column;
+    @FXML private TableColumn<ElementData, String> alloy1Column;
+    @FXML private TableColumn<ElementData, String> alloy2Column;
+    @FXML private TableColumn<ElementData, String> alloy3Column;
 
     private final ObservableList<ElementData> elementsData = FXCollections.observableArrayList();
+
+    private static File currentDbFile = null;
 
     public void initialize() { // Called automatically at the start
         setupMeasurementsTableView();
         setupOneMeasurementTableView();
+        setupSelectionListener();
 
         // Bind the disable state: true if measurements list is empty
         closeDatabaseMenuItem.disableProperty().bind(
                 Bindings.isEmpty(measurements)
         );
-
-
     }
 
     private void setupMeasurementsTableView() {
@@ -64,7 +75,8 @@ public class MainController {
         idColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         dateTimeColumn.setCellValueFactory(cellData -> cellData.getValue().dateTimeProperty());
         pointsNumColumn.setCellValueFactory(cellData -> cellData.getValue().pointsNumProperty().asObject());
-        baseIdColumn.setCellValueFactory(cellData -> cellData.getValue().baseIdProperty().asObject());
+        baseElementNameColumn.setCellValueFactory(cellData -> cellData.getValue().baseElementNameProperty());
+        alloyTypeColumn.setCellValueFactory(cellData -> cellData.getValue().alloyTypeProperty());
         commentColumn.setCellValueFactory(cellData -> cellData.getValue().commentProperty());
 
         measurementsTableView.setEditable(true); // Allow edits on the table as a whole
@@ -77,11 +89,30 @@ public class MainController {
         elementNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         concentrationColumn.setCellValueFactory(cellData -> cellData.getValue().concentrationProperty().asObject());
         deviationColumn.setCellValueFactory(cellData -> cellData.getValue().deviationProperty().asObject());
-        mark1Column.setCellValueFactory(cellData -> cellData.getValue().mark1Property());
-        mark2Column.setCellValueFactory(cellData -> cellData.getValue().mark2Property());
-        mark3Column.setCellValueFactory(cellData -> cellData.getValue().mark3Property());
+        alloy1Column.setCellValueFactory(cellData -> cellData.getValue().alloy1Property());
+        alloy2Column.setCellValueFactory(cellData -> cellData.getValue().alloy2Property());
+        alloy3Column.setCellValueFactory(cellData -> cellData.getValue().alloy3Property());
 
         oneMeasurementTableView.setItems(elementsData);
+    }
+
+    private void setupSelectionListener() {
+        measurementsTableView.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((obs, oldSel, newSel) -> {
+                    if (newSel != null) {
+                        try {
+                            loadElementsForMeasurement(newSel, elementsData);
+                            updateAlloyNamesColumns(newSel.getAlloyNames());
+                        } catch (SQLException | NullPointerException e) {
+                            e.printStackTrace();
+                            showError("Database Error", "Unable to load data from the selected file.");
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                            showError("Permission Error", "Unable to load open the selected file. Try to run the program as administrator.");
+                        }
+                    }
+                });
     }
 
     @FXML
@@ -106,62 +137,46 @@ public class MainController {
                 new FileChooser.ExtensionFilter("SQLite Database Files", "*.sqlite3", "*.db")
         );
         Window window = measurementsTableView.getScene().getWindow();
-        File selectedFile = fileChooser.showOpenDialog(window);
+        setCurrentDbFile(fileChooser.showOpenDialog(window));
 
-        if (selectedFile != null) {
-            loadMeasurementsFromDatabase(selectedFile);
+        if (getCurrentDbFile() != null) {
+            try {
+                loadMeasurementsFromDatabase(measurements);
+            } catch (SQLException | NullPointerException e) {
+                e.printStackTrace();
+                showError("Database Error", "Unable to load data from the selected file.");
+            } catch (SecurityException e) {
+                e.printStackTrace();
+                showError("Permission Error", "Unable to load open the selected file. Try to run the program as administrator.");
+            }
         }
     }
 
     @FXML
     private void onCloseDatabase() {
+        setCurrentDbFile(null);
         measurements.clear();
+        updateAlloyNamesColumns(List.of()); // Reset column headers to M1, M2, M3
     }
 
-    private void loadMeasurementsFromDatabase(File dbFile) {
-        measurements.clear();
-        String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
+    /**
+     * Updates the M1–M3 column headers to the first three alloy names
+     * from the given list.
+     */
+    private void updateAlloyNamesColumns(List<String> names) {
 
-        String query = "SELECT Id, DataTime, AvaragingsNum, BaseId, Comment, AlloyType FROM Results";
+        // Pick off up to the first three names, or M... if missing
+        String name1 = names.size() >= 1 ? names.get(0) : "M1";
+        String name2 = names.size() >= 2 ? names.get(1) : "M2";
+        String name3 = names.size() >= 3 ? names.get(2) : "M3";
 
-        try (Connection conn = DriverManager.getConnection(url);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            DateTimeFormatter inputFormat = DateTimeFormatter.ISO_DATE_TIME;
-            DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
-
-            while (rs.next()) {
-                System.out.println("Row: ID=" + rs.getInt("Id") + " " + rs.getInt("BaseId"));
-                int id = rs.getInt("Id");
-                String rawDate = rs.getString("DataTime");
-                String formattedDate = rawDate;
-
-                try {
-                    LocalDateTime parsedDate = LocalDateTime.parse(rawDate, inputFormat);
-                    formattedDate = parsedDate.format(outputFormat);
-                } catch (Exception e) {
-                    // Leave rawDate if parsing fails
-                }
-
-                Measurement m = new Measurement(
-                        id,
-                        formattedDate,
-                        rs.getInt("AvaragingsNum"),
-                        rs.getInt("BaseId"),
-                        rs.getString("Comment"),
-                        rs.getString("AlloyType")
-                );
-
-                measurements.add(m);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showError("Database Error", "Unable to load data from the selected file.");
-        }
+        // Assuming your fx:id fields are these:
+        alloy1Column.setText(name1);
+        alloy2Column.setText(name2);
+        alloy3Column.setText(name3);
     }
 
+    // — helpers —
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -171,4 +186,10 @@ public class MainController {
     }
 
 
+    public static File getCurrentDbFile() {
+        return currentDbFile;
+    }
+    public void setCurrentDbFile(File dbFile) {
+        currentDbFile = dbFile;
+    }
 }
