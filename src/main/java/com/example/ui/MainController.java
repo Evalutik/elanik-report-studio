@@ -1,20 +1,10 @@
 package com.example.ui;
 
 import com.example.models.ElementData;
-import com.example.models.ElementPercentageFitStore;
 import com.example.models.Measurement;
-import com.example.models.TypeAlloyMatch;
-import com.example.utils.Calculator;
-import com.example.utils.DatabaseConnection;
-import com.example.utils.PeriodicTable;
 import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,8 +15,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
-import static com.example.services.DataService.loadElementsForMeasurement;
-import static com.example.services.DataService.loadMeasurementsFromDatabase;
+import static com.example.services.LoadDataService.*;
 
 
 public class MainController {
@@ -102,8 +91,7 @@ public class MainController {
                 .addListener((obs, oldSel, newSel) -> {
                     if (newSel != null) {
                         try {
-                            loadElementsForMeasurement(newSel, elementsData);
-                            updateAlloyNamesColumns(newSel.getAlloyNames());
+                            loadFullDataForMeasurement(newSel, elementsData, alloy1Column, alloy2Column, alloy3Column);
                         } catch (SQLException | NullPointerException e) {
                             e.printStackTrace();
                             showError("Database Error", "Unable to load data from the selected file.");
@@ -113,20 +101,6 @@ public class MainController {
                         }
                     }
                 });
-    }
-
-    @FXML
-    void onAbout(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText("Elanik Report Tool");
-        alert.setContentText("This application generates PDF reports from Elanik measurement data.");
-        alert.showAndWait();
-    }
-
-    @FXML
-    void onExit(ActionEvent event) {
-        System.exit(0);
     }
 
     @FXML
@@ -156,27 +130,26 @@ public class MainController {
     private void onCloseDatabase() {
         setCurrentDbFile(null);
         measurements.clear();
-        updateAlloyNamesColumns(List.of()); // Reset column headers to M1, M2, M3
+        elementsData.clear();
+        loadAlloyNamesColumns(List.of(), alloy1Column, alloy2Column, alloy3Column); // Reset column headers to M1, M2, M3
     }
 
-    /**
-     * Updates the M1–M3 column headers to the first three alloy names
-     * from the given list.
-     */
-    private void updateAlloyNamesColumns(List<String> names) {
-
-        // Pick off up to the first three names, or M... if missing
-        String name1 = names.size() >= 1 ? names.get(0) : "M1";
-        String name2 = names.size() >= 2 ? names.get(1) : "M2";
-        String name3 = names.size() >= 3 ? names.get(2) : "M3";
-
-        // Assuming your fx:id fields are these:
-        alloy1Column.setText(name1);
-        alloy2Column.setText(name2);
-        alloy3Column.setText(name3);
+    @FXML
+    void onAbout(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Elanik Report Tool");
+        alert.setContentText("This application generates PDF reports from Elanik measurement data.");
+        alert.showAndWait();
     }
 
-    // — helpers —
+    @FXML
+    void onExit(ActionEvent event) {
+        System.exit(0);
+    }
+
+
+
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -186,10 +159,6 @@ public class MainController {
     }
 
 
-    public static File getCurrentDbFile() {
-        return currentDbFile;
-    }
-    public void setCurrentDbFile(File dbFile) {
-        currentDbFile = dbFile;
-    }
+    public static File getCurrentDbFile() { return currentDbFile; }
+    public void setCurrentDbFile(File dbFile) { currentDbFile = dbFile; }
 }

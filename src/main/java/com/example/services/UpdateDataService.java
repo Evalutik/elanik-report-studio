@@ -5,58 +5,25 @@ import com.example.models.ElementPercentageFitStore;
 import com.example.models.Measurement;
 import com.example.models.TypeAlloyMatch;
 import com.example.utils.DatabaseConnection;
-import com.example.utils.PeriodicTable;
-import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import javafx.collections.ObservableList;
 
 import static com.example.domain.BlobDecoder.decodeElements;
 import static com.example.domain.BlobDecoder.decodeMatches;
 import static com.example.domain.ElementDataMapFactory.getElementDataMap;
 
-/**
- * Coordinates reading measurements and per-measurement element data.
- */
-public class DataService {
-
-
-    public static void loadMeasurementsFromDatabase(ObservableList<Measurement> measurements) throws SQLException, NullPointerException, SecurityException {
-        measurements.clear();
-
-        String query = "SELECT Id, DataTime, AvaragingsNum, BaseId, Comment, AlloyType FROM Results";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                String dateTime = formatDateTime(rs.getString("DataTime"));
-                String baseElementName = PeriodicTable.getElementName(rs.getInt("BaseId"));
-
-                Measurement m = new Measurement(
-                        rs.getInt("Id"),
-                        dateTime,
-                        rs.getInt("AvaragingsNum"),
-                        baseElementName,
-                        rs.getString("AlloyType"),
-                        rs.getString("Comment")
-                );
-
-                measurements.add(m);
-            }
-        }
+public class UpdateDataService {
+    public static void updateFullDataForMeasurement(Measurement measurement) throws SQLException, NullPointerException, SecurityException {
+        updateElementsForMeasurement(measurement);
+        //updates anything else
     }
 
-    /**
-     * Called whenever the user selects a row in the left table.
-     * Rebuilds `elementsData`.
-     */
-    public static void loadElementsForMeasurement(Measurement measurement, ObservableList<ElementData> elementsData) throws SQLException, NullPointerException, SecurityException {
-        elementsData.clear();
+
+    private static void updateElementsForMeasurement(Measurement measurement) throws SQLException, NullPointerException, SecurityException {
         int resultId = measurement.getId();
 
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -79,8 +46,11 @@ public class DataService {
             updateAlloyNames(measurement, matches);
 
             Map<Integer, ElementData> byIndex = getElementDataMap(matches, elements, resultId);
-            // 3) push into the observable list
-            elementsData.addAll(byIndex.values());
+
+            // reoderd
+
+            measurement.getElementsData().clear();
+            measurement.getElementsData().addAll(byIndex.values());
         }
     }
 
@@ -102,20 +72,5 @@ public class DataService {
             }
 
         }
-    }
-
-    private static String formatDateTime(String rawDate) {
-
-        DateTimeFormatter inputFormat = DateTimeFormatter.ISO_DATE_TIME;
-        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
-
-        String formattedDate = rawDate;
-        try {
-            LocalDateTime parsedDate = LocalDateTime.parse(rawDate, inputFormat);
-            formattedDate = parsedDate.format(outputFormat);
-        } catch (Exception e) {
-            // Leave rawDate if parsing fails
-        }
-        return formattedDate;
     }
 }
