@@ -1,9 +1,7 @@
 package com.example.services;
 
-import com.example.models.ElementData;
-import com.example.models.ElementPercentageFitStore;
-import com.example.models.Measurement;
-import com.example.models.TypeAlloyMatch;
+import com.example.models.*;
+import com.example.utils.Calculator;
 import com.example.utils.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,13 +13,16 @@ import java.util.Map;
 import static com.example.domain.BlobDecoder.decodeElements;
 import static com.example.domain.BlobDecoder.decodeMatches;
 import static com.example.domain.ElementDataMapFactory.getElementDataMap;
+import static com.example.services.SortDataService.sortElementsData;
+import static com.example.utils.Formatter.getPrefixFromFit;
 
 public class UpdateDataService {
+
     public static void updateFullDataForMeasurement(Measurement measurement) throws SQLException, NullPointerException, SecurityException {
         updateElementsForMeasurement(measurement);
+        updateCEForMeasurement(measurement);
         //updates anything else
     }
-
 
     private static void updateElementsForMeasurement(Measurement measurement) throws SQLException, NullPointerException, SecurityException {
         int resultId = measurement.getId();
@@ -45,12 +46,11 @@ public class UpdateDataService {
 
             updateAlloyNames(measurement, matches);
 
-            Map<Integer, ElementData> byIndex = getElementDataMap(matches, elements, resultId);
-
-            // reoderd
+            Map<Integer, ElementData> indexedElementsData = getElementDataMap(matches, elements, resultId);
+            List<ElementData> sortedElementsData = sortElementsData(indexedElementsData, measurement.getBaseElementName());
 
             measurement.getElementsData().clear();
-            measurement.getElementsData().addAll(byIndex.values());
+            measurement.getElementsData().addAll(sortedElementsData);
         }
     }
 
@@ -63,7 +63,8 @@ public class UpdateDataService {
                     ps.setInt(1, match.nameId());
                     try (ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) {
-                            measurement.getAlloyNames().add(rs.getString("Name"));
+                            String prefix = getPrefixFromFit(match.fit());
+                            measurement.getAlloyNames().add(prefix + " " + rs.getString("Name"));
                         } else {
                             measurement.getAlloyNames().add("Unknown alloy"); // no data
                         }
@@ -73,4 +74,29 @@ public class UpdateDataService {
 
         }
     }
+
+    private static void updateCEForMeasurement(Measurement measurement) throws SQLException, NullPointerException {
+        int resultId = measurement.getId();
+        try (Connection conn = DatabaseConnection.getConnection()){
+            String query = "SELECT Min, Max FROM CE WHERE ResultId = ?";
+            try (PreparedStatement ps = conn.prepareStatement(query)) {
+                ps.setInt(1, resultId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        float min = rs.getFloat(1);
+                        float max = rs.getFloat(2);
+                        measurement.setCE(new CarbonEquivalentData(
+                                Calculator.round(Calculator.concentration(min, max), 3),
+                                Calculator.round(Calculator.deviation(min, max), 3)
+                        ));
+                    } else { // Data not found in the CE table
+                        measurement.setCE(null);
+                    }
+                }
+
+            }
+        }
+    }
+
+
 }

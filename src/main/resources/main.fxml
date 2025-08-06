@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -8,9 +10,9 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="609.0" prefWidth="1054.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ui.MainController">
+<AnchorPane prefHeight="609.0" prefWidth="1086.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ui.MainController">
     <!-- Menu Bar -->
-    <MenuBar layoutY="1.0" prefHeight="25.0" prefWidth="1084.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <MenuBar layoutY="1.0" prefHeight="25.0" prefWidth="1081.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
             <Menu text="File">
                 <items>
@@ -34,25 +36,30 @@
     </MenuBar>
    <TableView fx:id="measurementsTableView" layoutY="25.0" prefHeight="584.0" prefWidth="618.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0">
        <columns>
-           <TableColumn fx:id="selectColumn" text="" prefWidth="30" />
-           <TableColumn fx:id="idColumn" text="Номер" />
-           <TableColumn fx:id="dateTimeColumn" text="Время" />
-           <TableColumn fx:id="pointsNumColumn" text="Точек" />
-           <TableColumn fx:id="baseElementNameColumn" text="Основа" />
-           <TableColumn fx:id="alloyTypeColumn" text="Тип" />
-           <TableColumn fx:id="commentColumn" text="Комментарий" />
+           <TableColumn fx:id="selectColumn" prefWidth="26.399994254112244" text="" />
+           <TableColumn fx:id="idColumn" prefWidth="60.79998588562012" text="Номер" />
+           <TableColumn fx:id="dateTimeColumn" prefWidth="95.60001373291016" text="Время" />
+           <TableColumn fx:id="pointsNumColumn" prefWidth="49.60003662109375" text="Точек" />
+           <TableColumn fx:id="baseElementNameColumn" prefWidth="51.20001220703125" text="Основа" />
+           <TableColumn fx:id="alloyTypeColumn" prefWidth="118.7999267578125" text="Тип" />
+           <TableColumn fx:id="commentColumn" prefWidth="168.79995727539062" text="Комментарий" />
        </columns>
    </TableView>
-   <TableView fx:id="oneMeasurementTableView" layoutX="616.0" layoutY="26.0" prefHeight="583.0" prefWidth="438.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="616.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+   <TableView fx:id="oneMeasurementTableView" layoutX="617.2" layoutY="50.0" prefHeight="559.0" prefWidth="469.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="617.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
      <columns>
-       <TableColumn fx:id="elementNameColumn" text="Элемент" />
-       <TableColumn fx:id="concentrationColumn" text="\%" />
-         <TableColumn fx:id="deviationColumn" text="±" />
-         <TableColumn fx:id="alloy1Column" text="M1" />
-         <TableColumn fx:id="alloy2Column" text="M2" />
-         <TableColumn fx:id="alloy3Column" text="M3" />
+       <TableColumn fx:id="elementNameColumn" prefWidth="62.0" text="Элемент" />
+       <TableColumn fx:id="concentrationColumn" prefWidth="51.60003662109375" text="\%" />
+         <TableColumn fx:id="deviationColumn" prefWidth="53.199951171875" text="±" />
+         <TableColumn fx:id="alloy1Column" prefWidth="100.0" text="M1" />
+         <TableColumn fx:id="alloy2Column" prefWidth="100.0" text="M2" />
+         <TableColumn fx:id="alloy3Column" prefWidth="100.0" text="M3" />
      </columns>
    </TableView>
+   <Label fx:id="measurementCE" layoutX="618.0" layoutY="25.0" prefHeight="25.0" prefWidth="469.0" text="No measurement chosen" AnchorPane.leftAnchor="617.0" AnchorPane.topAnchor="25.0">
+      <padding>
+         <Insets left="10.0" />
+      </padding>
+   </Label>
 
 
 </AnchorPane>

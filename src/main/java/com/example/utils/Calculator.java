@@ -15,12 +15,10 @@ public class Calculator {
 
 
     public static float round(float value, int places) {
-        System.out.println(value);
         if (places < 0) throw new IllegalArgumentException("places must be non-negative");
 
         BigDecimal bd = new BigDecimal(Float.toString(value));
         bd = bd.setScale(places, RoundingMode.HALF_UP);
-        System.out.println(bd.floatValue());
         return bd.floatValue();
     }
 

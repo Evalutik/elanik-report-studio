@@ -14,14 +14,15 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-
 import static com.example.services.LoadDataService.*;
 
 
 public class MainController {
 
-    @FXML private MenuItem closeDatabaseMenuItem;
+    private static File currentDbFile = null;
+    public Label measurementCE;
 
+    @FXML private MenuItem closeDatabaseMenuItem;
     @FXML private TableView<Measurement> measurementsTableView;
 
     @FXML private TableColumn<Measurement, Boolean> selectColumn;
@@ -31,7 +32,6 @@ public class MainController {
     @FXML private TableColumn<Measurement, String> baseElementNameColumn;
     @FXML private TableColumn<Measurement, String> alloyTypeColumn;
     @FXML private TableColumn<Measurement, String> commentColumn;
-
     private final ObservableList<Measurement> measurements = FXCollections.observableArrayList();
 
     @FXML private TableView<ElementData> oneMeasurementTableView;
@@ -41,10 +41,7 @@ public class MainController {
     @FXML private TableColumn<ElementData, String> alloy1Column;
     @FXML private TableColumn<ElementData, String> alloy2Column;
     @FXML private TableColumn<ElementData, String> alloy3Column;
-
     private final ObservableList<ElementData> elementsData = FXCollections.observableArrayList();
-
-    private static File currentDbFile = null;
 
     public void initialize() { // Called automatically at the start
         setupMeasurementsTableView();
@@ -87,21 +84,22 @@ public class MainController {
 
     private void setupSelectionListener() {
         measurementsTableView.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((obs, oldSel, newSel) -> {
-                    if (newSel != null) {
-                        try {
-                            loadFullDataForMeasurement(newSel, elementsData, alloy1Column, alloy2Column, alloy3Column);
-                        } catch (SQLException | NullPointerException e) {
-                            e.printStackTrace();
-                            showError("Database Error", "Unable to load data from the selected file.");
-                        } catch (SecurityException e) {
-                            e.printStackTrace();
-                            showError("Permission Error", "Unable to load open the selected file. Try to run the program as administrator.");
-                        }
+            .selectedItemProperty()
+            .addListener((obs, oldSel, newSel) -> {
+                if (newSel != null) {
+                    try {
+                        loadFullDataForMeasurement(newSel, measurementCE, elementsData, alloy1Column, alloy2Column, alloy3Column);
+                    } catch (SQLException | NullPointerException e) {
+                        e.printStackTrace();
+                        showError("Database Error", "Unable to load data from the selected file.");
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                        showError("Permission Error", "Unable to load open the selected file. Try to run the program as administrator.");
                     }
-                });
+                }
+            });
     }
+
 
     @FXML
     private void onOpenDatabase() {
@@ -132,6 +130,7 @@ public class MainController {
         measurements.clear();
         elementsData.clear();
         loadAlloyNamesColumns(List.of(), alloy1Column, alloy2Column, alloy3Column); // Reset column headers to M1, M2, M3
+        measurementCE.setText("No measurement chosen");
     }
 
     @FXML
@@ -149,7 +148,6 @@ public class MainController {
     }
 
 
-
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -157,7 +155,6 @@ public class MainController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 
     public static File getCurrentDbFile() { return currentDbFile; }
     public void setCurrentDbFile(File dbFile) { currentDbFile = dbFile; }

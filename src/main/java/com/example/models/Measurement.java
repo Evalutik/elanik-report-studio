@@ -5,6 +5,8 @@ import java.util.List;
 import javafx.beans.property.*;
 
 public class Measurement {
+    private CarbonEquivalentData ce = null;
+
     private final BooleanProperty selected = new SimpleBooleanProperty(false);
     private final IntegerProperty id;
     private final StringProperty dateTime;
@@ -47,4 +49,9 @@ public class Measurement {
     public List<String> getAlloyNames() {
         return alloyNames;
     }
+
+    public CarbonEquivalentData getCE() {
+        return ce;
+    }
+    public void setCE(CarbonEquivalentData ce) { this.ce = ce; }
 }

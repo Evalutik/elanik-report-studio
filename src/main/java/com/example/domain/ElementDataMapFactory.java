@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.utils.Formatter.getPrefixFromFit;
+
 public class ElementDataMapFactory {
 
     public static Map<Integer, ElementData> getElementDataMap(
@@ -57,17 +59,10 @@ public class ElementDataMapFactory {
 
     private static String getAlloyData(ElementPercentageFitStore eStore) throws SQLException{
         if (eStore == null) return "";
-        if (eStore.fit() == 0) return "";
-        String prefix = "";
-        if (eStore.fit() == 1.4f){
-            prefix = "(+)";
-        } else if (eStore.fit() == 2.8f){
-            prefix = "(±)";
-        } else if (eStore.fit() == 4.2f){
-            prefix = "(−)";
-        }
+        if (eStore.min() < 0 || eStore.max() < 0) return "";
+        String prefix = getPrefixFromFit(eStore.fit());
 
-        String AlloyValue = "";
+        String AlloyValue;
         if (eStore.commentId() == 0){
             AlloyValue = String.valueOf(eStore.min()) + " – " + String.valueOf(eStore.max());
         } else {
@@ -112,8 +107,8 @@ public class ElementDataMapFactory {
                         float max = rs.getFloat(2);
                         return new ElementData(
                                 PeriodicTable.getElementName(eNumber),
-                                Calculator.concentration(min, max),
-                                Calculator.deviation(min, max),
+                                Calculator.round(Calculator.concentration(min, max), 3),
+                                Calculator.round(Calculator.deviation(min, max), 3),
                                 "", "", "" // Mark values unknown at this step - to be filled later.
                         );
                     } else { // Data not found in the Composition table

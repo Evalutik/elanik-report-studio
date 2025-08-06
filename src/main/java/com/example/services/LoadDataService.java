@@ -7,6 +7,7 @@ import com.example.utils.PeriodicTable;
 import java.sql.*;
 import java.util.List;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 
 import static com.example.services.UpdateDataService.updateFullDataForMeasurement;
@@ -50,14 +51,19 @@ public class LoadDataService {
      * Rebuilds `elementsData`.
      */
     public static void loadFullDataForMeasurement(Measurement measurement,
+                                                  Label ceLabel,
                                                   ObservableList<ElementData> elementsData,
                                                   TableColumn<ElementData, String> alloy1Column,
                                                   TableColumn<ElementData, String> alloy2Column,
                                                   TableColumn<ElementData, String> alloy3Column
     ) throws SQLException, NullPointerException, SecurityException {
-        elementsData.clear();
         updateFullDataForMeasurement(measurement);
+
+        elementsData.clear();
         elementsData.addAll(measurement.getElementsData());
+
+        loadCELabel(measurement, ceLabel);
+
         // Rename column headers
         loadAlloyNamesColumns(measurement.getAlloyNames(), alloy1Column, alloy2Column, alloy3Column);
     }
@@ -79,6 +85,14 @@ public class LoadDataService {
         alloy1Column.setText(name1);
         alloy2Column.setText(name2);
         alloy3Column.setText(name3);
+    }
+
+    public static void loadCELabel(Measurement measurement, Label ceLabel ) {
+        if (measurement.getCE() == null){
+            ceLabel.setText("Данные об углеродом эквиваленте отсутствуют.");
+        } else {
+            ceLabel.setText("Углеродный эквивалент (CE): " + measurement.getCE().toString());
+        }
     }
 
 }

@@ -33,4 +33,8 @@ public class ElementData {
             case 3 -> alloyType3.set(alloyData);
         }
     }
+
+    public String getName() {return name.getValue();}
+    public float getConcentration() {return concentration.getValue();}
+
 }

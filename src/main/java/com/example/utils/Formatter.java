@@ -18,4 +18,18 @@ public class Formatter {
         }
         return formattedDate;
     }
+
+    public static String getPrefixFromFit(float fit) {
+        String prefix = "";
+        if (fit == 0f) {
+            prefix = "";
+        } else if (fit == 1.4f){
+            prefix = "(✓)";
+        } else if (fit == 2.8f){
+            prefix = "(!✓)";
+        } else if (fit == 4.2f){
+            prefix = "(✕)";
+        }
+        return prefix;
+    }
 }
