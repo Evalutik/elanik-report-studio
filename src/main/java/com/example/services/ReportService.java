@@ -4,6 +4,7 @@ import com.example.models.ElementData;
 import com.example.models.Measurement;
 import com.example.models.Report;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -13,10 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.example.utils.Formatter.formatDateTime;
 
@@ -39,6 +37,8 @@ public final class ReportService {
         FM_CFG.setClassForTemplateLoading(ReportService.class, "/templates");
         FM_CFG.setDefaultEncoding("UTF-8");
         FM_CFG.setOutputEncoding("UTF-8"); // add this line
+        FM_CFG.setOutputFormat(HTMLOutputFormat.INSTANCE);
+
 
     }
 
@@ -80,9 +80,10 @@ public final class ReportService {
      *  - Simpler debugging of the rendered HTML.
      *  - Template logic remains simple (<#list measurements as m> …).
      */
-    private static Map<String, Object> buildTemplateModel(Report report) {
+    private static Map<String, Object> buildTemplateModel(Report report) throws IOException {
         Map<String, Object> model = new HashMap<>();
 
+        model.put("logoBase64", getImageBase64("/imgs/company-logo.png"));
         model.put("creationDateTime", formatDateTime(report.creationDateTime().toString()));
         model.put("serial", report.serial() == null ? "" : report.serial());
 
@@ -169,6 +170,8 @@ public final class ReportService {
 
             // Try to embed a TTF from resources to support Cyrillic/UTF-8
             registerDefaultFontIfAvailable(builder, "/fonts/DejaVuSans.ttf", "DejaVu Sans");
+            registerDefaultFontIfAvailable(builder, "/fonts/Roboto-Regular.ttf", "Roboto-Regular");
+
 
             builder.toStream(os);
             builder.run();
@@ -197,6 +200,17 @@ public final class ReportService {
         } catch (Exception e) {
             // font is optional — swallow exception and let rendering continue with fallback fonts
             e.printStackTrace();
+        }
+    }
+
+    private static String getImageBase64(String resourcePath) throws IOException {
+        try (InputStream is = ReportService.class.getResourceAsStream(resourcePath)) {
+            if (is == null) {
+                throw new FileNotFoundException("Image not found: " + resourcePath);
+            }
+            byte[] imageBytes = is.readAllBytes();
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
+            return "data:image/png;base64," + base64;
         }
     }
 

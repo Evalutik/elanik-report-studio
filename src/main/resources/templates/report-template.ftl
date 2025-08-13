@@ -28,11 +28,16 @@
             padding: 0;
         }
         body {
-            font-family: 'DejaVu Sans', sans-serif;
+            font-family: 'Roboto-Regular', 'DejaVu Sans', sans-serif;
             font-size: 0.8rem;
             color: #111;
             margin: 3rem 4rem;
         }
+        img{
+            height: 40px;
+            margin-right: 10px;
+        }
+
         h1 {
             font-size: 2rem;
             line-height: 1.2;
@@ -42,11 +47,16 @@
             line-height: 1.15;
         }
         .header{
-            margin-bottom: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .header-col{
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1.2;
         }
         .meta p{
-            font-size: 1rem;
-            color: #444;
+            font-size: 0.9rem;
+            color: #999;
         }
 
         .measurement {
@@ -77,10 +87,10 @@
         table { width: 100%; border-collapse: collapse; margin-top: 6px; }
         th, td {
             border: 1px solid #ddd;
-            padding: 6px;
+            padding: 5px;
             text-align: left;
-            font-size: 0.8rem;
-            line-height: 1.2;
+            font-size: 0.75rem;
+            line-height: 1.18;
         }
         th { background: #f0f0f0; font-weight: bold; }
         .nowrap { white-space: nowrap; }
@@ -99,7 +109,13 @@
 </head>
 <body>
 <div class="header">
-    <h1>Elanik Measurement Report</h1>
+    <div class="header-col">
+        <img src="${logoBase64?no_esc}" alt="Company Logo"/>
+    </div>
+    <div class="header-col">
+        <h1>Elanik Measurement Report</h1>
+    </div>
+
     <div class="meta">
         <p>Created: ${creationDateTime}</p>
         <p>
@@ -114,7 +130,7 @@
 <div class="measurement">
     <div class="info">
         <div class="row">
-            <div><p><strong>Measurement:</strong> ${m.id}</p></div>
+            <div><p><strong>Measurement N </strong>${m.id}</p></div>
             <div class="subtext"><p>${m.dateTime}</p></div>
         </div>
         <p><strong>Points number:</strong> ${m.pointsNum}</p>
