@@ -24,7 +24,7 @@
             </Menu>
             <Menu text="Report">
                 <items>
-                    <MenuItem text="Generate..." />
+                    <MenuItem text="Generate..." onAction="#onGenerateReport"/>
                 </items>
             </Menu>
             <Menu text="Help">

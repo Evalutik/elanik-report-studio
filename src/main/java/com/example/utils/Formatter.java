@@ -19,6 +19,12 @@ public class Formatter {
         return formattedDate;
     }
 
+    public static String formatToReportName(LocalDateTime date) {
+        DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+        String timestamp = date.format(FMT);
+        return "report_" + timestamp + ".pdf";
+    }
+
     public static String getPrefixFromFit(float fit) {
         String prefix = "";
         if (fit == 0f) {
@@ -32,4 +38,5 @@ public class Formatter {
         }
         return prefix;
     }
+
 }

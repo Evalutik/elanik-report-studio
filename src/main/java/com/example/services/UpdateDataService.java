@@ -3,10 +3,7 @@ package com.example.services;
 import com.example.models.*;
 import com.example.utils.Calculator;
 import com.example.utils.DatabaseConnection;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +18,7 @@ public class UpdateDataService {
     public static void updateFullDataForMeasurement(Measurement measurement) throws SQLException, NullPointerException, SecurityException {
         updateElementsForMeasurement(measurement);
         updateCEForMeasurement(measurement);
-        //updates anything else
+        // update anything else
     }
 
     private static void updateElementsForMeasurement(Measurement measurement) throws SQLException, NullPointerException, SecurityException {
@@ -98,5 +95,17 @@ public class UpdateDataService {
         }
     }
 
-
+    public static String getSerial() throws SQLException, NullPointerException {
+        String query = "SELECT \"Value\" FROM Descriptor WHERE Identifier = 'Serial'";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(query)
+        ) {
+            if (rs.next()) {
+                return rs.getString(1);
+            } else { // Data not found in the Descriptor table
+                return "Not data";
+            }
+        }
+    }
 }

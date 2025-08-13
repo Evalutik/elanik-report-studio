@@ -1,9 +1,13 @@
 package com.example.ui;
 
+import com.example.domain.MessageFactory;
 import com.example.models.ElementData;
 import com.example.models.Measurement;
+import com.example.models.Report;
+import com.example.services.ReportService;
 import java.io.File;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -15,6 +19,9 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import static com.example.services.LoadDataService.*;
+import static com.example.services.UpdateDataService.getSerial;
+import static com.example.services.UpdateDataService.updateFullDataForMeasurement;
+import static com.example.utils.Formatter.formatToReportName;
 
 
 public class MainController {
@@ -91,10 +98,10 @@ public class MainController {
                         loadFullDataForMeasurement(newSel, measurementCE, elementsData, alloy1Column, alloy2Column, alloy3Column);
                     } catch (SQLException | NullPointerException e) {
                         e.printStackTrace();
-                        showError("Database Error", "Unable to load data from the selected file.");
+                        showError("error.db.title", "error.db.message");
                     } catch (SecurityException e) {
                         e.printStackTrace();
-                        showError("Permission Error", "Unable to load open the selected file. Try to run the program as administrator.");
+                        showError("error.noPermission.title", "error.noPermission.message");
                     }
                 }
             });
@@ -116,10 +123,10 @@ public class MainController {
                 loadMeasurementsFromDatabase(measurements);
             } catch (SQLException | NullPointerException e) {
                 e.printStackTrace();
-                showError("Database Error", "Unable to load data from the selected file.");
+                showError("error.db.title", "error.db.message");
             } catch (SecurityException e) {
                 e.printStackTrace();
-                showError("Permission Error", "Unable to load open the selected file. Try to run the program as administrator.");
+                showError("error.noPermission.title", "error.noPermission.message");
             }
         }
     }
@@ -148,6 +155,59 @@ public class MainController {
     }
 
 
+    public static File getCurrentDbFile() { return currentDbFile; }
+    public void setCurrentDbFile(File dbFile) { currentDbFile = dbFile; }
+
+    public void onGenerateReport(ActionEvent actionEvent) {
+        LocalDateTime creationDateTime = LocalDateTime.now();
+        List<Measurement> selectedMeasurements = measurements.filtered(Measurement::isSelected);
+
+        if (selectedMeasurements.isEmpty()) {
+            showError(MessageFactory.get("error.noDataSelected.title"), MessageFactory.get( "error.noDataSelected.message"));
+            return;
+        }
+        try{
+            for (Measurement measurement : selectedMeasurements) {
+                updateFullDataForMeasurement(measurement);
+            }
+
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Save PDF Report");
+            chooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
+            );
+            chooser.setInitialFileName(formatToReportName(creationDateTime)); // Prefill the file name
+            Window window = measurementsTableView.getScene().getWindow();
+            File outputFile = chooser.showSaveDialog(window);
+            if (outputFile == null) { return; }
+
+            try {
+                Report report = new Report(selectedMeasurements, outputFile, getSerial(), creationDateTime);
+                ReportService.generate(report);
+                showInfo("Report Generated", "Your PDF report was saved to:\n" + outputFile.getAbsolutePath());
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                showError("Report Error", "Failed to generate or save the report:\n" + e.getMessage());
+            }
+
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+            showError("error.db.title", "error.db.message");
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            showError("error.noPermission.title", "error.noPermission.message");
+        }
+    }
+
+    private void showInfo(String title, String message) {
+        Alert info = new Alert(Alert.AlertType.INFORMATION);
+        info.setTitle(title);
+        info.setHeaderText(null);
+        info.setContentText(message);
+        info.showAndWait();
+    }
+
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -155,7 +215,4 @@ public class MainController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-    public static File getCurrentDbFile() { return currentDbFile; }
-    public void setCurrentDbFile(File dbFile) { currentDbFile = dbFile; }
 }

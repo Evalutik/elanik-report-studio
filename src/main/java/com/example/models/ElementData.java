@@ -36,5 +36,9 @@ public class ElementData {
 
     public String getName() {return name.getValue();}
     public float getConcentration() {return concentration.getValue();}
+    public float getDeviation() {return deviation.getValue();}
+    public String getAlloyType1() {return alloyType1.getValue();}
+    public String getAlloyType2() {return alloyType2.getValue();}
+    public String getAlloyType3() {return alloyType3.getValue();}
 
 }
