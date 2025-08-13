@@ -1,82 +1,161 @@
+<#macro showStatus text>
+    <#if (text?has_content) && (text?length >= 4)>
+        <#assign prefix = text?substring(0,4)>
+        <#assign rest = text?substring(4)>
+        <#if prefix == "(✓) ">
+            <strong style="color:green;">✓ </strong>${rest}
+        <#elseif prefix == "(!✓)">
+            <strong style="color:gold;">✓ </strong>${rest}
+        <#elseif prefix == "(✕) ">
+            <strong style="color:red;">✕ </strong>${rest}
+        <#else>
+            ${text}
+        </#if>
+    <#else>
+        ${text}
+    </#if>
+</#macro>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style type="text/css">
-        @page { size: A4; margin: 24mm; }
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 12px; color: #111; }
-        h1 { font-size: 16px; margin-bottom: 6px; }
-        .meta { font-size: 10px; color: #444; margin-bottom: 12px; }
-        .measurement { margin-bottom: 18px; page-break-inside: avoid; }
+        @page { size: A4; margin: 15mm; }
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 0.8rem;
+            color: #111;
+            margin: 3rem 4rem;
+        }
+        h1 {
+            font-size: 2rem;
+            line-height: 1.2;
+        }
+        p {
+            font-size: 0.8rem;
+            line-height: 1.15;
+        }
+        .header{
+            margin-bottom: 0.9rem;
+        }
+        .meta p{
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .measurement {
+            margin-bottom: 2.5rem;
+            page-break-inside: avoid;
+        }
+        .measurement p{font-size: 0.9rem;}
+        .row{
+            line-height: 1.15;
+        }
+        .row div{
+            display: inline-block;
+        }
+        .row div.subtext{
+            float: right;
+        }
+        .measurement .info{
+            margin-bottom: 1rem;
+        }
+
+
+        .subtext{
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+
         table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 11px; }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+            font-size: 0.8rem;
+            line-height: 1.2;
+        }
         th { background: #f0f0f0; font-weight: bold; }
         .nowrap { white-space: nowrap; }
         /* avoid breaking a row across pages */
         tr { page-break-inside: avoid; }
         /* force new table on new page if needed */
+
+
+        @media print {
+            body {
+                margin: 0; /* Let @page handle margins in PDF/print mode */
+            }
+        }
     </style>
-    <title>title Example</title>
+    <title>Elanik Measurement Report</title>
 </head>
 <body>
-<h1>Report</h1>
-<div class="meta">
-    Created: ${creationDateTime}
-    <#if serial?? && serial?has_content>
-        Serial: ${serial}
-    </#if>
+<div class="header">
+    <h1>Elanik Measurement Report</h1>
+    <div class="meta">
+        <p>Created: ${creationDateTime}</p>
+        <p>
+            <#if serial?? && serial?has_content>
+                Serial Number: ${serial}
+            </#if>
+        </p>
+    </div>
 </div>
 
 <#list measurements as m>
 <div class="measurement">
-    <div>
-        <strong>Measurement Id:</strong> ${m.id}
-        <strong>Time:</strong> ${m.dateTime}
-        <strong>Points number:</strong> ${m.pointsNum}
-
-        <#if m.baseElementName?? && m.baseElementName?has_content>
-            <strong>Base Element:</strong> ${m.baseElementName}
-        </#if>
-        <#if m.alloyType?? && m.alloyType?has_content>
-            <strong>Alloy Type:</strong> ${m.alloyType}
-        </#if>
-        <#if m.ce?? && m.ce?has_content>
-            <strong>CE:</strong> ${m.ce}
-        </#if>
-
-
-        <#if m.comment?? && m.comment?has_content>
-            <strong>User comment:</strong> ${m.comment}
-        </#if>
-
-
+    <div class="info">
+        <div class="row">
+            <div><p><strong>Measurement:</strong> ${m.id}</p></div>
+            <div class="subtext"><p>${m.dateTime}</p></div>
+        </div>
+        <p><strong>Points number:</strong> ${m.pointsNum}</p>
+        <p>
+            <#if m.comment?? && m.comment?has_content>
+                <strong>User comment:</strong> ${m.comment}
+            </#if>
+        </p>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Element</th>
-            <th>%</th>
-            <th>±</th>
-            <th>${m.alloyNames[0]! "M1"}</th>
-            <th>${m.alloyNames[1]! "M2"}</th>
-            <th>${m.alloyNames[2]! "M3"}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <#list m.elementsData as el>
-        <tr>
-            <td>${el.name}</td>
-            <td>${(el.concentration)}</td>
-            <td>${(el.deviation)}</td>
-            <td>${el.alloyType1}</td>
-            <td>${el.alloyType2}</td>
-            <td>${el.alloyType3}</td>
-        </tr>
-        </#list>
-        </tbody>
-    </table>
+    <div class="table-data">
+        <p>
+            <#if m.ce?? && m.ce?has_content>
+                <strong>CE:</strong> ${m.ce}
+            </#if>
+        </p>
+        <table>
+            <thead>
+            <tr>
+                <th>Element</th>
+                <th>%</th>
+                <th>±</th>
+                <th><@showStatus text=(m.alloyNames[0]! "M1")/></th>
+                <th><@showStatus text=(m.alloyNames[1]! "M2")/></th>
+                <th><@showStatus text=(m.alloyNames[2]! "M3")/></th>
+            </tr>
+            </thead>
+            <tbody>
+            <#list m.elementsData as el>
+            <tr>
+                <td>${el.name}</td>
+                <td>${(el.concentration)}</td>
+                <td>${(el.deviation)}</td>
+                <td><@showStatus text=(el.alloyType1! "")/></td>
+                <td><@showStatus text=(el.alloyType2! "")/></td>
+                <td><@showStatus text=(el.alloyType3! "")/></td>
+            </tr>
+            </#list>
+            </tbody>
+        </table>
+    </div>
 </div>
 </#list>
 </body>

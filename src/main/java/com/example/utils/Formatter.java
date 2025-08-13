@@ -7,7 +7,7 @@ public class Formatter {
     public static String formatDateTime(String rawDate) {
 
         DateTimeFormatter inputFormat = DateTimeFormatter.ISO_DATE_TIME;
-        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
+        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy");
 
         String formattedDate = rawDate;
         try {
