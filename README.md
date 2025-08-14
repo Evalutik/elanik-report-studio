@@ -16,7 +16,7 @@ Before building the application, make sure you have:
 > C:\Program Files\Java\jdk-20
 > ```
 >
-> In IntelliJ, check: `File → Project Structure → SDKs`.
+> In IntelliJ, check: `File → Project Structure → SDKs` and `File → Project Structure → Project → SDK` 
 
 ---
 
@@ -26,6 +26,8 @@ JavaFX modules are downloaded via Maven and located in your local Maven reposito
 ```
 C:\Users<YourUser>.m2\repository\org\openjfx\
 ```
+> In IntelliJ, check: `File → Project Structure → Libraries`.
+
 
 Example paths for Windows:
 ```
