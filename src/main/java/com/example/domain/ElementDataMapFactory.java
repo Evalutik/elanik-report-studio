@@ -34,7 +34,8 @@ public class ElementDataMapFactory {
             int alloyPosition = 1;
             // ...and pull up to 3 alloy-fits into columns M1, M2, M3:
             for (TypeAlloyMatch alloyType : grouped.keySet()) {
-                elementData.setAlloy(alloyPosition, getAlloyData(getFirstStore(grouped.get(alloyType), eNumber)));
+                ElementPercentageFitStore eStore = getFirstStore(grouped.get(alloyType), eNumber);
+                elementData.setAlloy(alloyPosition, getAlloyData(eStore));
                 alloyPosition++;
             }
             byElementNumber.put(eNumber, elementData);
@@ -62,13 +63,13 @@ public class ElementDataMapFactory {
         if (eStore.min() < 0 || eStore.max() < 0) return "";
         String prefix = getPrefixFromFit(eStore.fit());
 
-        String AlloyValue;
+        String alloyValue;
         if (eStore.commentId() == 0){
-            AlloyValue = String.valueOf(eStore.min()) + " – " + String.valueOf(eStore.max());
+            alloyValue = eStore.min() + " – " + eStore.max();
         } else {
-            AlloyValue = fetchCommentByCommentId(eStore.commentId());
+            alloyValue = fetchCommentByCommentId(eStore.commentId());
         }
-        return prefix + " " + AlloyValue;
+        return prefix + " " + alloyValue;
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.services;
 
+import com.example.domain.MessageFactory;
 import com.example.models.ElementData;
 import com.example.models.Measurement;
 import com.example.utils.DatabaseConnection;
@@ -37,8 +38,9 @@ public class LoadDataService {
                         dateTime,
                         rs.getInt("AvaragingsNum"),
                         baseElementName,
-                        rs.getString("AlloyType"),
-                        rs.getString("Comment")
+                        rs.getString("Comment"),
+                        rs.getString("AlloyType")
+
                 );
 
                 measurements.add(m);
@@ -77,9 +79,9 @@ public class LoadDataService {
                                       TableColumn<ElementData, String> alloy2Column,
                                       TableColumn<ElementData, String> alloy3Column) {
         // Pick off up to the first three names, or M... if missing
-        String name1 = names.size() >= 1 ? names.get(0) : "M1";
-        String name2 = names.size() >= 2 ? names.get(1) : "M2";
-        String name3 = names.size() >= 3 ? names.get(2) : "M3";
+        String name1 = names.size() >= 1 ? names.get(0) : "Марка 1";
+        String name2 = names.size() >= 2 ? names.get(1) : "Марка 2";
+        String name3 = names.size() >= 3 ? names.get(2) : "Марка 3";
 
         // Assuming your fx:id fields are these:
         alloy1Column.setText(name1);
@@ -89,9 +91,9 @@ public class LoadDataService {
 
     public static void loadCELabel(Measurement measurement, Label ceLabel ) {
         if (measurement.getCE() == null){
-            ceLabel.setText("Данные об углеродом эквиваленте отсутствуют.");
+            ceLabel.setText(MessageFactory.get("ui.noCarbonEquivalentData.message"));
         } else {
-            ceLabel.setText("Углеродный эквивалент (CE): " + measurement.getCE().toString());
+            ceLabel.setText(MessageFactory.get("ui.carbonEquivalent.message", measurement.getCE().toString()));
         }
     }
 

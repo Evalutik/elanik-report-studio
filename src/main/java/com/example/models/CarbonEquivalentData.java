@@ -11,6 +11,6 @@ public class CarbonEquivalentData {
     }
 
     public String toString(){
-        return concentration + "%, ±" + deviation;
+        return concentration + "";
     }
 }

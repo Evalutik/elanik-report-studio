@@ -1,5 +1,6 @@
 package com.example.utils;
 
+import com.example.models.ReportOptions;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -7,7 +8,7 @@ public class Formatter {
     public static String formatDateTime(String rawDate) {
 
         DateTimeFormatter inputFormat = DateTimeFormatter.ISO_DATE_TIME;
-        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy");
+        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
         String formattedDate = rawDate;
         try {
@@ -19,10 +20,11 @@ public class Formatter {
         return formattedDate;
     }
 
-    public static String formatToReportName(LocalDateTime date) {
+    public static String formatToReportName(LocalDateTime date, ReportOptions.Format fmt) {
         DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String timestamp = date.format(FMT);
-        return "report_" + timestamp + ".pdf";
+        String extension = fmt == ReportOptions.Format.PDF ? ".pdf" : ".html";
+        return "report_" + timestamp + extension;
     }
 
     public static String getPrefixFromFit(float fit) {

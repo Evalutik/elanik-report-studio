@@ -50,9 +50,9 @@
        <TableColumn fx:id="elementNameColumn" prefWidth="62.0" text="Элемент" />
        <TableColumn fx:id="concentrationColumn" prefWidth="51.60003662109375" text="\%" />
          <TableColumn fx:id="deviationColumn" prefWidth="53.199951171875" text="±" />
-         <TableColumn fx:id="alloy1Column" prefWidth="100.0" text="M1" />
-         <TableColumn fx:id="alloy2Column" prefWidth="100.0" text="M2" />
-         <TableColumn fx:id="alloy3Column" prefWidth="100.0" text="M3" />
+         <TableColumn fx:id="alloy1Column" prefWidth="100.0" text="Марка 1" />
+         <TableColumn fx:id="alloy2Column" prefWidth="100.0" text="Марка 2" />
+         <TableColumn fx:id="alloy3Column" prefWidth="100.0" text="Марка 3" />
      </columns>
    </TableView>
    <Label fx:id="measurementCE" layoutX="618.0" layoutY="25.0" prefHeight="25.0" prefWidth="469.0" text="No measurement chosen" AnchorPane.leftAnchor="617.0" AnchorPane.topAnchor="25.0">

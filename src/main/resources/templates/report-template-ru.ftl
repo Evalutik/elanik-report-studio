@@ -34,12 +34,12 @@
             margin: 3rem 4rem;
         }
         img{
-            height: 40px;
+            height: 25px;
             margin-right: 10px;
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 1.3rem;
             line-height: 1.2;
         }
         p {
@@ -54,9 +54,11 @@
             vertical-align: middle;
             line-height: 1.2;
         }
+        .header p{
+            font-size: 0.9rem;
+        }
         .meta p{
             font-size: 0.9rem;
-            color: #999;
         }
 
         .measurement {
@@ -77,10 +79,11 @@
             margin-bottom: 1rem;
         }
 
-
-        .subtext{
-            color: #999;
-            font-size: 0.9rem;
+        .underline{
+            text-decoration: underline;
+            display: inline-block;
+            width: 10rem;
+            border-bottom: 1px solid black;
         }
 
 
@@ -105,38 +108,34 @@
             }
         }
     </style>
-    <title>Elanik Measurement Report</title>
+    <title>Отчёт по результатам измерений</title>
 </head>
 <body>
 <div class="header">
     <div class="header-col">
-        <img src="${logoBase64?no_esc}" alt="Company Logo"/>
+        <img src="${logoBase64?no_esc}" alt="Логотип Компании"/>
     </div>
     <div class="header-col">
-        <h1>Elanik Measurement Report</h1>
+        <h1>Отчёт по результатам измерений</h1>
     </div>
-
-    <div class="meta">
-        <p>Created: ${creationDateTime}</p>
-        <p>
-            <#if serial?? && serial?has_content>
-                Serial Number: ${serial}
-            </#if>
-        </p>
-    </div>
+    <p>
+        Лазерно-искровой эмиссионный спектрометр "ЭЛАНИК"
+    </p>
+    <p>
+        <#if serial?? && serial?has_content>
+            Серийный №: ${serial}
+        </#if>
+    </p>
 </div>
 
 <#list measurements as m>
 <div class="measurement">
     <div class="info">
-        <div class="row">
-            <div><p><strong>Measurement N </strong>${m.id}</p></div>
-            <div class="subtext"><p>${m.dateTime}</p></div>
-        </div>
-        <p><strong>Points number:</strong> ${m.pointsNum}</p>
+        <p><strong>Измерение № ${m.id}</strong> от ${m.dateTime}</p>
+        <p>Количество точек измерения: ${m.pointsNum}</p>
         <p>
             <#if m.comment?? && m.comment?has_content>
-                <strong>User comment:</strong> ${m.comment}
+                Комментарий пользователя: ${m.comment}
             </#if>
         </p>
     </div>
@@ -144,24 +143,24 @@
     <div class="table-data">
         <p>
             <#if m.ce?? && m.ce?has_content>
-                <strong>CE:</strong> ${m.ce}
+                Углеродный эквивалент (CE): ${m.ce}
             </#if>
         </p>
         <table>
             <thead>
             <tr>
-                <th>Element</th>
+                <th>Элемент</th>
                 <th>%</th>
                 <th>±</th>
-                <th><@showStatus text=(m.alloyNames[0]! "M1")/></th>
-                <th><@showStatus text=(m.alloyNames[1]! "M2")/></th>
-                <th><@showStatus text=(m.alloyNames[2]! "M3")/></th>
+                <th><@showStatus text=(m.alloyNames[0]! "Марка 1")/></th>
+                <th><@showStatus text=(m.alloyNames[1]! "Марка 2")/></th>
+                <th><@showStatus text=(m.alloyNames[2]! "Марка 3")/></th>
             </tr>
             </thead>
             <tbody>
             <#list m.elementsData as el>
             <tr>
-                <td>${el.name}</td>
+                <td><strong>${el.name}</strong></td>
                 <td>${(el.concentration)}</td>
                 <td>${(el.deviation)}</td>
                 <td><@showStatus text=(el.alloyType1! "")/></td>
@@ -174,5 +173,11 @@
     </div>
 </div>
 </#list>
+
+<div class="meta">
+    <p>Время и дата создания отчёта: ${creationDateTime}</p>
+    <p style="margin-top: 1rem">Отчёт подготовлен: <span class="underline"></span> / <span class="underline"></span> .</p>
+</div>
+
 </body>
 </html>

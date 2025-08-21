@@ -3,6 +3,7 @@ package com.example.services;
 import com.example.models.ElementData;
 import com.example.models.Measurement;
 import com.example.models.Report;
+import com.example.models.ReportOptions;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
@@ -56,14 +57,20 @@ public final class ReportService {
         Map<String, Object> model = buildTemplateModel(report);
 
         // 2) render FreeMarker template -> HTML
-        String html = renderTemplateToHtml("report-template.ftl", model);
+        String templateName = getTemplateName(report.options());
+        String html = renderTemplateToHtml(templateName, model);
 
-        Path debug = Paths.get("target", "debug-report.html");
-        Files.createDirectories(debug.getParent());
-        Files.writeString(debug, html, StandardCharsets.UTF_8);
-
-        // 3) convert HTML -> PDF and save
-        renderPdfFromHtml(html, report.outputFile());
+        if (report.options().getFormat() == ReportOptions.Format.HTML) {
+            Files.writeString(report.outputFile().toPath(), html, StandardCharsets.UTF_8);
+        } else {
+            /*
+            Path debug = Paths.get("target", "debug-report.html");
+            Files.createDirectories(debug.getParent());
+            Files.writeString(debug, html, StandardCharsets.UTF_8);
+            */
+            // 3) convert HTML -> PDF and save
+            renderPdfFromHtml(html, report.outputFile());
+        }
     }
 
     // ---------- Step 1: Build model for FreeMarker ----------
@@ -185,7 +192,6 @@ public final class ReportService {
      */
     private static void registerDefaultFontIfAvailable(PdfRendererBuilder builder, String resourcePath, String familyName) {
         try (InputStream fontIs = ReportService.class.getResourceAsStream(resourcePath)) {
-            System.out.println("fontIs " + fontIs);
             if (fontIs == null) return;
 
             // copy to temp file because builder.useFont(File, ...) is straightforward and reliable
@@ -220,6 +226,18 @@ public final class ReportService {
     private static String safe(String s) {
         if (s == null) return "";
         return s;
+    }
+
+    private static String getTemplateName(ReportOptions options) {
+        String name = "report-template";
+        String extension = ".ftl";
+        String suffix;
+        if (options.getLang() == ReportOptions.Lang.RU){
+            suffix = "-ru";
+        } else {
+            suffix = "-en";
+        }
+        return name + suffix + extension;
     }
 
 
