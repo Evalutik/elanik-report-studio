@@ -1,6 +1,6 @@
 package com.example.services;
 
-import com.example.domain.MessageFactory;
+import com.example.domain.LangFactory;
 import com.example.models.ElementData;
 import com.example.models.Measurement;
 import com.example.utils.DatabaseConnection;
@@ -91,9 +91,9 @@ public class LoadDataService {
 
     public static void loadCELabel(Measurement measurement, Label ceLabel ) {
         if (measurement.getCE() == null){
-            ceLabel.setText(MessageFactory.get("ui.noCarbonEquivalentData.message"));
+            ceLabel.setText(LangFactory.get("ui.noCarbonEquivalentData.message"));
         } else {
-            ceLabel.setText(MessageFactory.get("ui.carbonEquivalent.message", measurement.getCE().toString()));
+            ceLabel.setText(LangFactory.get("ui.carbonEquivalent.message", measurement.getCE().toString()));
         }
     }
 

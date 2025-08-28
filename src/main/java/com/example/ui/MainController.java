@@ -1,6 +1,6 @@
 package com.example.ui;
 
-import com.example.domain.MessageFactory;
+import com.example.domain.LangFactory;
 import com.example.models.ElementData;
 import com.example.models.Measurement;
 import com.example.models.Report;
@@ -21,6 +21,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -50,8 +51,8 @@ public class MainController {
 
     @FXML private TableView<ElementData> oneMeasurementTableView;
     @FXML private TableColumn<ElementData, String> elementNameColumn;
-    @FXML private TableColumn<ElementData, Float> concentrationColumn;
-    @FXML private TableColumn<ElementData, Float> deviationColumn;
+    @FXML private TableColumn<ElementData, String> concentrationColumn;
+    @FXML private TableColumn<ElementData, String> deviationColumn;
     @FXML private TableColumn<ElementData, String> alloy1Column;
     @FXML private TableColumn<ElementData, String> alloy2Column;
     @FXML private TableColumn<ElementData, String> alloy3Column;
@@ -87,8 +88,8 @@ public class MainController {
 
     private void setupOneMeasurementTableView() {
         elementNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        concentrationColumn.setCellValueFactory(cellData -> cellData.getValue().concentrationProperty().asObject());
-        deviationColumn.setCellValueFactory(cellData -> cellData.getValue().deviationProperty().asObject());
+        concentrationColumn.setCellValueFactory(cellData -> cellData.getValue().concentrationProperty());
+        deviationColumn.setCellValueFactory(cellData -> cellData.getValue().deviationProperty());
         alloy1Column.setCellValueFactory(cellData -> cellData.getValue().alloy1Property());
         alloy2Column.setCellValueFactory(cellData -> cellData.getValue().alloy2Property());
         alloy3Column.setCellValueFactory(cellData -> cellData.getValue().alloy3Property());
@@ -105,10 +106,10 @@ public class MainController {
                         loadFullDataForMeasurement(newSel, measurementCE, elementsData, alloy1Column, alloy2Column, alloy3Column);
                     } catch (SQLException | NullPointerException e) {
                         e.printStackTrace();
-                        showError(MessageFactory.get( "error.db.title"), MessageFactory.get( "error.db.message"));
+                        showError(LangFactory.get("error.db.title"), LangFactory.get("error.db.message"));
                     } catch (SecurityException e) {
                         e.printStackTrace();
-                        showError(MessageFactory.get("error.noPermission.title"), MessageFactory.get( "error.noPermission.message"));
+                        showError(LangFactory.get("error.noPermission.title"), LangFactory.get("error.noPermission.message"));
                     }
                 }
             });
@@ -130,10 +131,10 @@ public class MainController {
                 loadMeasurementsFromDatabase(measurements);
             } catch (SQLException | NullPointerException e) {
                 e.printStackTrace();
-                showError(MessageFactory.get("error.db.title"), MessageFactory.get("error.db.message"));
+                showError(LangFactory.get("error.db.title"), LangFactory.get("error.db.message"));
             } catch (SecurityException e) {
                 e.printStackTrace();
-                showError( MessageFactory.get("error.noPermission.title"), MessageFactory.get("error.noPermission.message"));
+                showError(LangFactory.get("error.noPermission.title"), LangFactory.get("error.noPermission.message"));
             }
         }
     }
@@ -144,15 +145,28 @@ public class MainController {
         measurements.clear();
         elementsData.clear();
         loadAlloyNamesColumns(List.of(), alloy1Column, alloy2Column, alloy3Column); // Reset column headers to M1, M2, M3
-        measurementCE.setText(MessageFactory.get("ui.noMeasurementChosen.message"));
+        measurementCE.setText(LangFactory.get("ui.noMeasurementChosen.message"));
     }
 
     @FXML
     void onAbout(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText(MessageFactory.get( "ui.aboutProgram.title"));
-        alert.setContentText(MessageFactory.get( "ui.aboutProgram.message"));
+        alert.setTitle(LangFactory.get("menu.help.about"));
+        alert.setHeaderText(LangFactory.get("ui.aboutProgram.title"));
+        Label label = new Label(LangFactory.get("ui.aboutProgram.message"));
+        label.setWrapText(true);
+        // Let the label grow and wrap with the dialog
+        label.setMaxWidth(Double.MAX_VALUE);
+        // allow label to compute its preferred height
+        label.setMaxHeight(Region.USE_PREF_SIZE);
+        label.maxWidthProperty().bind(alert.getDialogPane().widthProperty().subtract(20)); // small margin
+
+        alert.getDialogPane().setContent(label);
+        alert.setResizable(true);
+        alert.getDialogPane().setPrefWidth(420);
+        alert.getDialogPane().setPrefHeight(240);
+
+
         alert.showAndWait();
     }
 
@@ -170,7 +184,7 @@ public class MainController {
         List<Measurement> selectedMeasurements = measurements.filtered(Measurement::isSelected);
 
         if (selectedMeasurements.isEmpty()) {
-            showError(MessageFactory.get("error.noDataSelected.title"), MessageFactory.get( "error.noDataSelected.message"));
+            showError(LangFactory.get("error.noDataSelected.title"), LangFactory.get("error.noDataSelected.message"));
             return;
         }
 
@@ -186,7 +200,7 @@ public class MainController {
             }
         } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
-            showError(MessageFactory.get("error.db.title"), MessageFactory.get("error.db.message"));
+            showError(LangFactory.get("error.db.title"), LangFactory.get("error.db.message"));
             return;
         }
 
@@ -196,17 +210,17 @@ public class MainController {
         try {
             Report report = new Report(selectedMeasurements, outputFile, getSerial(), creationDateTime, options);
             ReportService.generate(report);
-            showInfo(MessageFactory.get("info.reportGenerated.title"), MessageFactory.get("info.reportGenerated.message", outputFile.getAbsolutePath()));
+            showInfo(LangFactory.get("info.reportGenerated.title"), LangFactory.get("info.reportGenerated.message", outputFile.getAbsolutePath()));
         }
         catch (Exception e) {
             e.printStackTrace();
-            showError(MessageFactory.get("error.reportGeneration.title"), MessageFactory.get("error.reportGeneration.message", e.getMessage()));
+            showError(LangFactory.get("error.reportGeneration.title"), LangFactory.get("error.reportGeneration.message", e.getMessage()));
         }
     }
 
     private Optional<ReportOptions> showReportOptionsDialogFXML() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/report-options.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/report-options.fxml"), LangFactory.BUNDLE);
             Parent root = loader.load();
 
             ReportOptionsController ctrl = loader.getController();
@@ -217,7 +231,7 @@ public class MainController {
             Stage dialog = new Stage();
             dialog.initOwner(measurementsTableView.getScene().getWindow()); // block the main window
             dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.setTitle("Report Options");
+            dialog.setTitle(LangFactory.get("reportOptions.title"));
             dialog.setScene(new Scene(root));
             dialog.setResizable(false);
 
@@ -226,7 +240,7 @@ public class MainController {
             return ctrl.getResult();
         } catch (IOException ex) {
             ex.printStackTrace();
-            showError(MessageFactory.get("error.dialog.title"), MessageFactory.get("error.dialog.message"));
+            showError(LangFactory.get("error.dialog.title"), LangFactory.get("error.dialog.message"));
             return Optional.empty();
         }
     }
@@ -246,7 +260,7 @@ public class MainController {
             return chooser.showSaveDialog(measurementsTableView.getScene().getWindow());
         } catch (SecurityException e) {
             e.printStackTrace();
-            showError(MessageFactory.get("error.noPermission.title"), MessageFactory.get("error.noPermission.message"));
+            showError(LangFactory.get("error.noPermission.title"), LangFactory.get("error.noPermission.message"));
             return null;
         }
     }

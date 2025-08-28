@@ -121,9 +121,9 @@ public final class ReportService {
         for (ElementData e : m.getElementsData()) {
             Map<String, Object> em = new HashMap<>();
             // put primitive values that templates can render/format
-            em.put("name", e.getName());
-            em.put("concentration", e.getConcentration());
-            em.put("deviation", e.getDeviation());
+            em.put("name", safe(e.getName()));
+            em.put("concentration", safe(e.getConcentration()));
+            em.put("deviation", safe(e.getDeviation()));
             em.put("alloyType1", safe(e.getAlloyType1()));
             em.put("alloyType2", safe(e.getAlloyType2()));
             em.put("alloyType3", safe(e.getAlloyType3()));

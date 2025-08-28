@@ -1,6 +1,7 @@
 package com.example;
 
 
+import com.example.domain.LangFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +13,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Elanik Reporter");
 
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"), LangFactory.BUNDLE);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 

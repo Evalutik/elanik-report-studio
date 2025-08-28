@@ -9,10 +9,13 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-public class MessageFactory {
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+public class LangFactory {
+
+    private static final String LANG = "ru"; // Options: ru | en
+
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
             "lang.messages",
-            Locale.forLanguageTag("ru"),
+            Locale.forLanguageTag(LANG),
             new ResourceBundle.Control() {
                 @Override
                 public ResourceBundle newBundle(
@@ -31,7 +34,7 @@ public class MessageFactory {
             }
     );
 
-    private MessageFactory() {}
+    private LangFactory() {}
 
     public static String get(String key, Object... args) {
         String pattern = BUNDLE.getString(key);

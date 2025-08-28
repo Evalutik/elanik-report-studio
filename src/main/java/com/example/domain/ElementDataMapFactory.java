@@ -38,6 +38,7 @@ public class ElementDataMapFactory {
                 elementData.setAlloy(alloyPosition, getAlloyData(eStore));
                 alloyPosition++;
             }
+            updateIfConcentrationZero(elementData);
             byElementNumber.put(eNumber, elementData);
         }
         return byElementNumber;
@@ -108,16 +109,36 @@ public class ElementDataMapFactory {
                         float max = rs.getFloat(2);
                         return new ElementData(
                                 PeriodicTable.getElementName(eNumber),
-                                Calculator.round(Calculator.concentration(min, max), 3),
-                                Calculator.round(Calculator.deviation(min, max), 3),
+                                String.valueOf(Calculator.round(Calculator.concentration(min, max), 3)),
+                                String.valueOf(Calculator.round(Calculator.deviation(min, max), 3)),
                                 "", "", "" // Mark values unknown at this step - to be filled later.
                         );
                     } else { // Data not found in the Composition table
-                        return new ElementData(PeriodicTable.getElementName(eNumber), 0, 0, "", "", "");
+                        return new ElementData(PeriodicTable.getElementName(eNumber), "", "", "", "", "");
                     }
                 }
 
             }
+        }
+    }
+
+    private static void updateIfConcentrationZero(ElementData elementData) {
+        if (elementData.getConcentrationFloat() == 0f){
+            float minLimit = Float.MAX_VALUE;
+            for (String alloy : elementData.getAlloys()){
+                if (null != alloy && alloy.contains("–")){
+                    try{
+                        float limit = Float.parseFloat(alloy.split("–")[1].trim().split(" ")[0]);
+                        minLimit = Math.min(limit, minLimit);
+                    } catch (NumberFormatException ignored){}
+                }
+            }
+            if (minLimit < Float.MAX_VALUE){
+                elementData.setConcentration("< " + minLimit);
+            } else {
+                elementData.setConcentration("");
+            }
+            elementData.setDeviation("");
         }
     }
 

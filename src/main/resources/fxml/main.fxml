@@ -14,48 +14,54 @@
     <!-- Menu Bar -->
     <MenuBar layoutY="1.0" prefHeight="25.0" prefWidth="1081.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
-            <Menu text="File">
+            <Menu text="%menu.file">
                 <items>
-                    <MenuItem onAction="#onOpenDatabase" text="Open database..." />
-                    <MenuItem fx:id="closeDatabaseMenuItem" onAction="#onCloseDatabase" text="Close database" />
+                    <MenuItem onAction="#onOpenDatabase" text="%menu.file.open" />
+                    <MenuItem fx:id="closeDatabaseMenuItem" onAction="#onCloseDatabase" text="%menu.file.close" />
                     <SeparatorMenuItem />
-                    <MenuItem onAction="#onExit" text="Exit" />
+                    <MenuItem onAction="#onExit" text="%menu.file.exit" />
                 </items>
             </Menu>
-            <Menu text="Report">
+            <Menu text="%menu.report">
                 <items>
-                    <MenuItem text="Generate..." onAction="#onGenerateReport"/>
+                    <MenuItem text="%menu.report.generate" onAction="#onGenerateReport"/>
                 </items>
             </Menu>
-            <Menu text="Help">
+            <Menu text="%menu.help">
                 <items>
-                    <MenuItem onAction="#onAbout" text="About" />
+                    <MenuItem onAction="#onAbout" text="%menu.help.about" />
                 </items>
             </Menu>
         </menus>
     </MenuBar>
    <TableView fx:id="measurementsTableView" layoutY="25.0" prefHeight="584.0" prefWidth="618.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0">
+       <placeholder>
+           <Label text="%table.placeholder"/>
+       </placeholder>
        <columns>
-           <TableColumn fx:id="selectColumn" prefWidth="26.399994254112244" text="" />
-           <TableColumn fx:id="idColumn" prefWidth="60.79998588562012" text="Номер" />
-           <TableColumn fx:id="dateTimeColumn" prefWidth="95.60001373291016" text="Время" />
-           <TableColumn fx:id="pointsNumColumn" prefWidth="49.60003662109375" text="Точек" />
-           <TableColumn fx:id="baseElementNameColumn" prefWidth="51.20001220703125" text="Основа" />
-           <TableColumn fx:id="alloyTypeColumn" prefWidth="118.7999267578125" text="Тип" />
-           <TableColumn fx:id="commentColumn" prefWidth="168.79995727539062" text="Комментарий" />
+           <TableColumn fx:id="selectColumn" prefWidth="26.399994254112244"/>
+           <TableColumn fx:id="idColumn" prefWidth="60.79998588562012" text="%table.id" />
+           <TableColumn fx:id="dateTimeColumn" prefWidth="95.60001373291016" text="%table.datetime" />
+           <TableColumn fx:id="pointsNumColumn" prefWidth="49.60003662109375" text="%table.points" />
+           <TableColumn fx:id="baseElementNameColumn" prefWidth="51.20001220703125" text="%table.base" />
+           <TableColumn fx:id="alloyTypeColumn" prefWidth="118.7999267578125" text="%table.alloy" />
+           <TableColumn fx:id="commentColumn" prefWidth="168.79995727539062" text="%table.comment" />
        </columns>
    </TableView>
    <TableView fx:id="oneMeasurementTableView" layoutX="617.2" layoutY="50.0" prefHeight="559.0" prefWidth="469.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="617.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
-     <columns>
-       <TableColumn fx:id="elementNameColumn" prefWidth="62.0" text="Элемент" />
-       <TableColumn fx:id="concentrationColumn" prefWidth="51.60003662109375" text="\%" />
-         <TableColumn fx:id="deviationColumn" prefWidth="53.199951171875" text="±" />
-         <TableColumn fx:id="alloy1Column" prefWidth="100.0" text="Марка 1" />
-         <TableColumn fx:id="alloy2Column" prefWidth="100.0" text="Марка 2" />
-         <TableColumn fx:id="alloy3Column" prefWidth="100.0" text="Марка 3" />
-     </columns>
+       <placeholder>
+           <Label text="%table.placeholder"/>
+       </placeholder>
+       <columns>
+           <TableColumn fx:id="elementNameColumn" prefWidth="62.0" text="%table.element" />
+           <TableColumn fx:id="concentrationColumn" prefWidth="51.60003662109375" text="%table.concentration" />
+           <TableColumn fx:id="deviationColumn" prefWidth="53.199951171875" text="%table.deviation" />
+           <TableColumn fx:id="alloy1Column" prefWidth="100.0" text="%table.alloy.1" />
+           <TableColumn fx:id="alloy2Column" prefWidth="100.0" text="%table.alloy.2" />
+           <TableColumn fx:id="alloy3Column" prefWidth="100.0" text="%table.alloy.3" />
+       </columns>
    </TableView>
-   <Label fx:id="measurementCE" layoutX="618.0" layoutY="25.0" prefHeight="25.0" prefWidth="469.0" text="No measurement chosen" AnchorPane.leftAnchor="617.0" AnchorPane.topAnchor="25.0">
+   <Label fx:id="measurementCE" layoutX="618.0" layoutY="25.0" prefHeight="25.0" prefWidth="469.0" text="%label.noMeasurement" AnchorPane.leftAnchor="617.0" AnchorPane.topAnchor="25.0">
       <padding>
          <Insets left="10.0" />
       </padding>

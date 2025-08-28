@@ -11,7 +11,10 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ui.ReportOptionsController">
+<?xml version="1.0" encoding="UTF-8"?>
+<BorderPane xmlns="http://javafx.com/javafx/24.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.ui.ReportOptionsController">
 
     <!-- center: input grid -->
     <center>
@@ -27,16 +30,19 @@
             </columnConstraints>
 
             <!-- row 0 -->
-            <Label text="Format:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <ComboBox fx:id="formatCombo" prefWidth="160" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="0" />
+            <Label text="%reportOptions.format" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <ComboBox fx:id="formatCombo" prefWidth="160"
+                      GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="0" />
 
             <!-- row 1 -->
-            <Label text="Language:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <ComboBox fx:id="langCombo" prefWidth="160" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
+            <Label text="%reportOptions.language" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <ComboBox fx:id="langCombo" prefWidth="160"
+                      GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
         </GridPane>
     </center>
 
@@ -49,14 +55,15 @@
 
             <children>
                 <!-- Cancel on left -->
-                <Button fx:id="cancelBtn" onAction="#onCancel" text="Cancel" />
+                <Button fx:id="cancelBtn" onAction="#onCancel" text="%reportOptions.cancel" />
 
                 <!-- flexible spacer -->
                 <Region HBox.hgrow="ALWAYS" />
 
                 <!-- Generate on right -->
-                <Button fx:id="okBtn" onAction="#onOk" text="Generate" />
+                <Button fx:id="okBtn" onAction="#onOk" text="%reportOptions.generate" />
             </children>
         </HBox>
     </bottom>
 </BorderPane>
+

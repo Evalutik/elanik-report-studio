@@ -28,7 +28,7 @@ public class SortDataService {
 
     private static void addCarbon(Map<Integer, ElementData> indexedElementsData, List<ElementData> out){
         ElementData carbonData = indexedElementsData.get(6);
-        if (carbonData != null && carbonData.getConcentration() > 0f){
+        if (carbonData != null && carbonData.getConcentrationFloat() > 0f){
             out.add(carbonData);
         }
     }
@@ -52,11 +52,11 @@ public class SortDataService {
                 // 1) filter out baseElementName
                 .filter(e -> !e.getValue().getName().equals(baseElementName))
                 // 2) filter out the special key=6 with conc>0
-                .filter(e -> !(e.getKey() == 6 && e.getValue().getConcentration() > 0f))
+                .filter(e -> !(e.getKey() == 6 && e.getValue().getConcentrationFloat() > 0f))
                 // 3) extract the ElementData
                 .map(Map.Entry::getValue)
                 // 4) sort by concentration descending
-                .sorted(Comparator.comparing(ElementData::getConcentration).reversed())
+                .sorted(Comparator.comparing(ElementData::getConcentrationFloat).reversed())
                 // 5) collect to list
                 .toList();
         out.addAll(otherSortedElements);
