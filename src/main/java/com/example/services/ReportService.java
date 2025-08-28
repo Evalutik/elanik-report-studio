@@ -97,7 +97,7 @@ public final class ReportService {
         List<Map<String, Object>> measurements = new ArrayList<>(report.measurements().size());
         for (Measurement m : report.measurements()) {
             Map<String, Object> mm = new HashMap<>();
-            mm.put("id", m.getId());
+            mm.put("id", safe(String.valueOf(m.getId())));
             mm.put("dateTime", m.getDateTime());
             mm.put("pointsNum", m.getPointsNum());
             mm.put("baseElementName", safe(m.getBaseElementName()));

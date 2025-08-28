@@ -35,6 +35,7 @@ import static com.example.utils.Formatter.formatToReportName;
 public class MainController {
 
     private static File currentDbFile = null;
+    private static File lastDirectory = null; // store last used folder
     public Label measurementCE;
 
     @FXML private MenuItem closeDatabaseMenuItem;
@@ -248,8 +249,11 @@ public class MainController {
     private File chooseOutputFile(ReportOptions.Format fmt, LocalDateTime creationDateTime) {
         try {
             FileChooser chooser = new FileChooser();
-            chooser.setTitle("Choose report location...");
+            chooser.setTitle(LangFactory.get("chooser.saveReport.title"));
             chooser.setInitialFileName(formatToReportName(creationDateTime, fmt));
+            if (lastDirectory != null && lastDirectory.exists()) {
+                chooser.setInitialDirectory(lastDirectory);
+            }
             if (fmt == ReportOptions.Format.PDF) {
                 chooser.getExtensionFilters()
                         .add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
@@ -257,7 +261,13 @@ public class MainController {
                 chooser.getExtensionFilters()
                         .add(new FileChooser.ExtensionFilter("HTML Files", "*.html", "*.htm"));
             }
-            return chooser.showSaveDialog(measurementsTableView.getScene().getWindow());
+
+            File chosenFile = chooser.showSaveDialog(measurementsTableView.getScene().getWindow());
+            if (chosenFile != null) {
+                lastDirectory = chosenFile.getParentFile();
+            }
+
+            return chosenFile;
         } catch (SecurityException e) {
             e.printStackTrace();
             showError(LangFactory.get("error.noPermission.title"), LangFactory.get("error.noPermission.message"));
