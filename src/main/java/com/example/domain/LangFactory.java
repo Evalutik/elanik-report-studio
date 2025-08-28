@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 
 public class LangFactory {
 
-    private static final String LANG = "ru"; // Options: ru | en
+    private static final String LANG = "en"; // Options: ru | en
 
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
             "lang.messages",
