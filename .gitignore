@@ -36,3 +36,28 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Additional ignores ###
+# Maven / build artifacts
+dependency-reduced-pom.xml
+
+# IDE / editor
+.idea/
+*.iml
+.vscode/
+
+# Local helper files
+command.txt
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs and temp files
+*.log
+*.tmp
+*~
+~$*
+
+# Environment files (may contain secrets)
+.env

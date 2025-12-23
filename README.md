@@ -1,106 +1,251 @@
-# Build Instructions
+# Elanik Reporter
 
-## 1. Prerequisites
+![Java](https://img.shields.io/badge/Java-21%2B-blue.svg)
+![Build](https://img.shields.io/badge/build-Maven-green)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Cross--platform-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-Before building the application, make sure you have:
+**A professional JavaFX desktop application for generating structured PDF/HTML reports from measurement data.**
 
-- **Java JDK 20** (or your development version)
-- **JavaFX 20 SDK** (modules: `controls`, `fxml`, `graphics`, `base`)
-- **Maven** (for building the fat JAR)
-- **IntelliJ IDEA** (optional, for project setup and inspection)
-- **jpackage** (included with JDK 14+)
+---
+
+## Demo
+
+> _Below are example screenshots and a sample PDF report. Replace these with your own images for maximum impact._
+
+![Main UI Screenshot](docs/demo-ui.png)
+![Sample PDF Report](docs/demo-report.png)
+
+---
+
+## Motivation & Use Cases
+
+Elanik Reporter was created to automate and professionalize the reporting process for measurement data in technical, scientific, and industrial environments. It is ideal for:
+- Metallurgy labs and foundries
+- Quality control departments
+- Research and academic projects
+- Any workflow requiring structured, multilingual, and portable reports
+
+By building this project, you demonstrate the ability to solve real-world problems with robust, maintainable, and user-friendly software.
+
+---
+
+## Technologies Used
+
+| Technology         | Purpose                                 |
+|-------------------|-----------------------------------------|
+| Java 21+          | Core application logic                   |
+| JavaFX            | Modern desktop UI                        |
+| SQLite (sqlite-jdbc) | Local database storage                |
+| FreeMarker        | HTML templating for reports              |
+| OpenHTMLToPDF     | HTML to PDF conversion                   |
+| Maven             | Build, dependency management             |
+| jpackage          | Native Windows packaging                 |
+
+---
+
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Key Features](#key-features)
+- [Screenshots](#screenshots)
+- [Prerequisites](#prerequisites)
+- [Installation & Build Instructions](#installation--build-instructions)
+- [Running the Application](#running-the-application)
+- [Packaging as a Native Windows EXE](#packaging-as-a-native-windows-exe)
+- [Project Structure](#project-structure)
+- [Development Notes & Tips](#development-notes--tips)
+- [Potential Improvements & Interview Talking Points](#potential-improvements--interview-talking-points)
+- [License & Contact](#license--contact)
+
+---
+
+## Project Overview
+
+Elanik Reporter is a desktop application designed to streamline the process of generating, viewing, and exporting detailed measurement reports. It leverages a modern JavaFX interface, stores data in a local SQLite database, and produces professional-quality reports in both PDF and HTML formats using FreeMarker templates and OpenHTMLToPDF. The application supports both English and Russian, making it suitable for international use.
+
+---
+
+## Key Features
+- **Modern JavaFX UI:** Intuitive, responsive interface for managing and browsing measurement data.
+- **SQLite Database Integration:** Reliable, portable storage for all measurement records.
+- **Advanced Report Generation:** Uses FreeMarker templates for flexible, maintainable report layouts.
+- **PDF & HTML Export:** High-quality output with embedded fonts for multilingual support.
+- **Internationalization:** English and Russian language support out of the box.
+- **Cross-Platform Packaging:** Build a fat JAR or a native Windows installer (EXE) with all dependencies.
+- **Extensible Architecture:** Clean separation of concerns (UI, services, models, utils) for easy maintenance and future growth.
+
+---
+
+## Screenshots
+> _Add screenshots of the main UI and a sample PDF report here to further impress recruiters and reviewers._
+
+---
+
+## Prerequisites
+
+Before building or running Elanik Reporter, ensure you have the following installed:
+
+- **Java JDK 21** (or your development version; minimum 20)
+- **JavaFX 21 SDK** (modules: `controls`, `fxml`, `graphics`, `base`)
+- **Maven 3.6+** (for dependency management and building the project)
+- **IntelliJ IDEA** (optional, but recommended for development)
+- **jpackage** (included with JDK 14+; for native packaging)
 
 > **Tip:** On Windows, the JDK is usually under:
->
-> ```
-> C:\Program Files\Java\jdk-20
-> ```
->
-> In IntelliJ, check: `File → Project Structure → SDKs` and `File → Project Structure → Project → SDK` 
+> `C:\Program Files\Java\jdk-21`
+> In IntelliJ, check: `File → Project Structure → SDKs` and `File → Project Structure → Project → SDK`.
 
 ---
 
-## 2. JavaFX Setup
+## Installation & Build Instructions
 
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourusername/elanik-reporter.git
+cd elanik-reporter
+```
+
+### 2. JavaFX Setup
 JavaFX modules are downloaded via Maven and located in your local Maven repository:
-```
-C:\Users<YourUser>.m2\repository\org\openjfx\
-```
-> In IntelliJ, check: `File → Project Structure → Libraries`.
-
+`C:\Users<YourUser>\.m2\repository\org\openjfx\`
 
 Example paths for Windows:
-```
-javafx-controls\20\javafx-controls-20-win.jar
-javafx-fxml\20\javafx-fxml-20-win.jar
-javafx-graphics\20\javafx-graphics-20-win.jar
-javafx-base\20\javafx-base-20-win.jar
-```
+- `javafx-controls/21/javafx-controls-21-win.jar`
+- `javafx-fxml/21/javafx-fxml-21-win.jar`
+- `javafx-graphics/21/javafx-graphics-21-win.jar`
+- `javafx-base/21/javafx-base-21-win.jar`
+
 > **Tip:** Use the `-win.jar` versions. Ignore `-sources.jar` and `-javadoc.jar`.
 
+### 3. Build a Fat JAR
+You can build a self-contained JAR with all dependencies using Maven:
+```bash
+mvn clean package
+```
+The resulting JAR will be in `target/elanik-reporter-all.jar`.
+
+### 4. Run the Application
+To run the application from the fat JAR:
+```bash
+java -jar target/elanik-reporter-all.jar
+```
+Or, to run directly from Maven (useful for development):
+```bash
+mvn javafx:run
+```
+
 ---
 
-## 3. Build a Fat JAR
+## Running the Application
 
-1. Open IntelliJ IDEA → **Build → Build Artifacts**.
-2. Select your main JAR artifact, e.g., `elanik-reporter-all.jar`.
-3. Click **Build**.
-4. The resulting JAR is located in:`<project-root>\target\elanik-reporter-all.jar`
-
-
-> **Tip:** This JAR contains all your project classes and dependencies.
+After building, simply execute:
+```bash
+java -jar target/elanik-reporter-all.jar
+```
+Or use your IDE's run configuration (main class: `com.example.App`).
 
 ---
 
-## 4. Create Windows EXE with jpackage
+## Packaging as a Native Windows EXE
 
-Open **PowerShell** and run:
-
+To create a Windows installer using `jpackage`, run (in PowerShell):
 ```powershell
-jpackage `
-  --input target `
-  --name ElanikReporter `
-  --main-jar elanik-reporter-all.jar `
-  --main-class com.example.App `
-  --type exe `
-  --win-console `
-  --module-path "C:\Users\User\.m2\repository\org\openjfx\javafx-base\20\javafx-base-20-win.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-controls\20\javafx-controls-20-win.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-fxml\20\javafx-fxml-20-win.jar;C:\Users\User\.m2\repository\org\openjfx\javafx-graphics\20\javafx-graphics-20-win.jar" `
+jpackage \
+  --input target \
+  --name ElanikReporter \
+  --main-jar elanik-reporter-all.jar \
+  --main-class com.example.App \
+  --type exe \
+  --win-console \
+  --module-path "C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-base\21\javafx-base-21-win.jar;C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-controls\21\javafx-controls-21-win.jar;C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-fxml\21\javafx-fxml-21-win.jar;C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-graphics\21\javafx-graphics-21-win.jar" \
   --add-modules javafx.controls,javafx.fxml,javafx.base,javafx.graphics,java.sql
 ```
-Explanation:
-- `--input target` → folder with your JAR
-- `--name ElanikReporter` → name of the EXE and program
-- `--main-jar elanik-reporter-all.jar` → main JAR file
-- `--main-class com.example.App` → fully qualified main class
-- `--type exe` → Windows executable
-- `--win-console` → shows console for logs/errors
-- `--module-path` → paths to JavaFX modules
-- `--add-modules` → all required modules, including java.sql
+The EXE will be located in `./ElanikReporter/ElanikReporter.exe`.
+
+> **Tip:** Use `--win-console` to see error messages if the EXE doesn't open. Ensure all JavaFX modules and `java.sql` are included in `--add-modules`.
 
 ---
 
-## 5. EXE Output
-
-After running jpackage, the EXE is located in:
-
-`<project-root>\ElanikReporter\ElanikReporter.exe`
-
-> **Tip:** By default, jpackage creates a small installer folder. You can move it anywhere, e.g., C:\Program Files\ElanikReporter.
-
----
-
-## 6. Debugging
-
-If the EXE doesn’t open:
-Use `--win-console` to see error messages in PowerShell.
-Ensure all JavaFX modules and java.sql are included in `--add-modules`.
-Verify the main class and JAR path.
+## Project Structure
+- `src/main/java` — application source code
+  - `com.example.App` — JavaFX entry point
+  - `services/` — database loading, report generation
+  - `models/` — domain objects (Measurement, Report, etc.)
+  - `ui/` — controllers and FXML
+  - `utils/` — DB connection, formatting, periodic table helper
+- `src/main/resources` — FXML, templates, images, fonts, and localization bundles
+- `pom.xml` — Maven configuration (plugins for JavaFX and shading)
 
 ---
 
-## 7. Tips & Common Issues
+## Development Notes & Tips
+- FreeMarker templates are in `src/main/resources/templates` — modify these to change report layout.
+- Fonts for PDF output are loaded from `src/main/resources/fonts` — add DejaVu/Roboto TTFs to support Cyrillic/UTF-8.
+- If you see version mismatch warnings, align your JDK, Maven compiler plugin, and `javafx.version` in `pom.xml` (recommended: JDK 21 + JavaFX 21).
+- Keep your project structure clean: `target/` for build artifacts, `.m2/` for Maven dependencies.
+- The EXE bundles a runtime, so end users don’t need Java installed.
 
-Always use the `-win.jar` versions of JavaFX on Windows.
-Keep project structure clean: target/ for build artifacts, .m2/ for Maven dependencies.
-If upgrading Java or JavaFX, update `--module-path`.
-EXE bundles a runtime, so end users don’t need Java installed.
+---
+
+## Potential Improvements & Interview Talking Points
+- Add unit/integration tests for `ReportService` and database access code.
+- Implement a CI workflow to build the fat JAR and run static analysis.
+- Add cross-platform packaging (macOS DMG, Linux AppImage) to demonstrate cross-platform delivery.
+- Enhance the UI with more advanced JavaFX features (charts, drag-and-drop, etc.).
+- Expand localization to additional languages.
+
+---
+
+## FAQ / Troubleshooting
+
+**Q: The app doesn't start or shows a JavaFX error.**
+A: Ensure you are using JDK 21+ and the correct JavaFX version. Check your `pom.xml` and local Maven repository for matching versions.
+
+**Q: The EXE doesn't open or crashes.**
+A: Run with `--win-console` to see error messages. Make sure all required JavaFX modules are included in the `--add-modules` argument.
+
+**Q: Fonts or non-Latin characters are missing in the PDF.**
+A: Add the required TTF fonts (e.g., DejaVu, Roboto) to `src/main/resources/fonts`.
+
+**Q: How do I add a new language?**
+A: Add a new `messages_xx.properties` file in `src/main/resources/lang` and update the language selection logic.
+
+---
+
+## Roadmap / Planned Features
+- [ ] Add unit and integration tests for core services
+- [ ] Implement CI/CD with GitHub Actions
+- [ ] Add macOS/Linux packaging (DMG, AppImage)
+- [ ] Enhance UI with charts and advanced controls
+- [ ] Expand localization (add more languages)
+- [ ] User preferences and settings dialog
+- [ ] Automatic update checker
+
+---
+
+## Contributing
+
+Contributions are welcome! To contribute:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes with clear messages
+4. Push to your fork and open a Pull Request
+5. Add tests for new features or bug fixes where possible
+
+For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Thanks for Reviewing!
+
+Elanik Reporter is a compelling, practical project to showcase in interviews and on your GitHub portfolio. It demonstrates your ability to deliver real-world, maintainable, and user-focused software—exactly what employers are looking for in a modern developer.
+
+---
+
+
