@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Elanik Reporter");
+        primaryStage.setTitle("Elanik Report Studio");
 
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"), LangFactory.BUNDLE);
         primaryStage.setScene(new Scene(root));

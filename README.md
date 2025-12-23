@@ -1,4 +1,4 @@
-# Elanik Reporter
+# Elanik Report Studio
 
 ![Java](https://img.shields.io/badge/Java-21%2B-blue.svg)
 ![Build](https://img.shields.io/badge/build-Maven-green)
@@ -9,18 +9,9 @@
 
 ---
 
-## Demo
-
-> _Below are example screenshots and a sample PDF report. Replace these with your own images for maximum impact._
-
-![Main UI Screenshot](docs/demo-ui.png)
-![Sample PDF Report](docs/demo-report.png)
-
----
-
 ## Motivation & Use Cases
 
-Elanik Reporter was created to automate and professionalize the reporting process for measurement data in technical, scientific, and industrial environments. It is ideal for:
+Elanik Report Studio was created to automate and professionalize the reporting process for measurement data in technical, scientific, and industrial environments. It is ideal for:
 - Metallurgy labs and foundries
 - Quality control departments
 - Research and academic projects
@@ -61,7 +52,7 @@ By building this project, you demonstrate the ability to solve real-world proble
 
 ## Project Overview
 
-Elanik Reporter is a desktop application designed to streamline the process of generating, viewing, and exporting detailed measurement reports. It leverages a modern JavaFX interface, stores data in a local SQLite database, and produces professional-quality reports in both PDF and HTML formats using FreeMarker templates and OpenHTMLToPDF. The application supports both English and Russian, making it suitable for international use.
+Elanik Report Studio is a desktop application designed to streamline the process of generating, viewing, and exporting detailed measurement reports. It leverages a modern JavaFX interface, stores data in a local SQLite database, and produces professional-quality reports in both PDF and HTML formats using FreeMarker templates and OpenHTMLToPDF. The application supports both English and Russian, making it suitable for international use.
 
 ---
 
@@ -83,7 +74,7 @@ Elanik Reporter is a desktop application designed to streamline the process of g
 
 ## Prerequisites
 
-Before building or running Elanik Reporter, ensure you have the following installed:
+Before building or running Elanik Report Studio, ensure you have the following installed:
 
 - **Java JDK 21** (or your development version; minimum 20)
 - **JavaFX 21 SDK** (modules: `controls`, `fxml`, `graphics`, `base`)
@@ -101,8 +92,8 @@ Before building or running Elanik Reporter, ensure you have the following instal
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/elanik-reporter.git
-cd elanik-reporter
+git clone https://github.com/yourusername/elanik-report-studio.git
+cd elanik-report-studio
 ```
 
 ### 2. JavaFX Setup
@@ -122,12 +113,12 @@ You can build a self-contained JAR with all dependencies using Maven:
 ```bash
 mvn clean package
 ```
-The resulting JAR will be in `target/elanik-reporter-all.jar`.
+The resulting JAR will be in `target/elanik-report-studio-all.jar`.
 
 ### 4. Run the Application
 To run the application from the fat JAR:
 ```bash
-java -jar target/elanik-reporter-all.jar
+java -jar target/elanik-report-studio-all.jar
 ```
 Or, to run directly from Maven (useful for development):
 ```bash
@@ -140,7 +131,7 @@ mvn javafx:run
 
 After building, simply execute:
 ```bash
-java -jar target/elanik-reporter-all.jar
+java -jar target/elanik-report-studio-all.jar
 ```
 Or use your IDE's run configuration (main class: `com.example.App`).
 
@@ -152,15 +143,15 @@ To create a Windows installer using `jpackage`, run (in PowerShell):
 ```powershell
 jpackage \
   --input target \
-  --name ElanikReporter \
-  --main-jar elanik-reporter-all.jar \
+  --name ElanikReportStudio \
+  --main-jar elanik-report-studio-all.jar \
   --main-class com.example.App \
   --type exe \
   --win-console \
   --module-path "C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-base\21\javafx-base-21-win.jar;C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-controls\21\javafx-controls-21-win.jar;C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-fxml\21\javafx-fxml-21-win.jar;C:\Users\<YourUser>\.m2\repository\org\openjfx\javafx-graphics\21\javafx-graphics-21-win.jar" \
   --add-modules javafx.controls,javafx.fxml,javafx.base,javafx.graphics,java.sql
 ```
-The EXE will be located in `./ElanikReporter/ElanikReporter.exe`.
+The EXE will be located in `./ElanikReportStudio/ElanikReportStudio.exe`.
 
 > **Tip:** Use `--win-console` to see error messages if the EXE doesn't open. Ensure all JavaFX modules and `java.sql` are included in `--add-modules`.
 
@@ -244,7 +235,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Thanks for Reviewing!
 
-Elanik Reporter is a compelling, practical project to showcase in interviews and on your GitHub portfolio. It demonstrates your ability to deliver real-world, maintainable, and user-focused software—exactly what employers are looking for in a modern developer.
+Elanik Report Studio is a compelling, practical project to showcase in interviews and on your GitHub portfolio. It demonstrates your ability to deliver real-world, maintainable, and user-focused software—exactly what employers are looking for in a modern developer.
 
 ---
 
